@@ -1,0 +1,6 @@
+Server - DEBUG - initialized: se.jherrlin.Server: { mode: server, port: 80, bufsize: 666, mtr: 1, seconds: 1, ip: 192.168.0.1 }
+Server - DEBUG - initialized: se.jherrlin.Server: { mode: server, port: 80, bufsize: 666, mtr: 1500, seconds: 666, ip: 192.168.0 }
+Server - DEBUG - initialized: se.jherrlin.Server: { mode: server, port: -1, bufsize: 666, mtr: 1500, seconds: 666, ip: 192.168.0.1 }
+Server - DEBUG - initialized: se.jherrlin.Server: { mode: server, port: 4950, bufsize: 1024, mtr: 1, seconds: 1, ip: 127.0.0.1 }
+Client - DEBUG - initialized: se.jherrlin.Client: { mode: client, port: 4950, bufsize: 1024, mtr: 5, seconds: 5, ip: 127.0.0.1 }
+Client - DEBUG - initialized: se.jherrlin.Client: { mode: client, port: 4950, bufsize: 1024, mtr: 5, seconds: 5, ip: 127.0.0.1 }
