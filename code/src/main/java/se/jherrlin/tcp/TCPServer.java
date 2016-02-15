@@ -6,10 +6,17 @@ package se.jherrlin.tcp;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.cli.CommandLine;
 
+import se.jherrlin.model.HTTPMethod;
 import se.jherrlin.model.Host;
+import se.jherrlin.handlers.*;
+import se.jherrlin.model.Request;
+import se.jherrlin.model.Response;
 
 public class TCPServer extends Host{
 
@@ -43,7 +50,7 @@ class ServerThread extends Thread {
 
     byte[] buf;
     InputStream inputStream;
-    OutputStream outputStream;
+    DataOutputStream outputStream;
 
     public ServerThread(Socket socket, int bufsize) {
         this.socket = socket;
@@ -57,7 +64,7 @@ class ServerThread extends Thread {
             outputStream = new DataOutputStream(this.socket.getOutputStream());
 
             // Wait for data to arrive in the inputStream
-            Thread.sleep(200);
+            Thread.sleep(100);
 
             // message from client
             String message = "";
@@ -69,9 +76,54 @@ class ServerThread extends Thread {
             }
             while (inputStream.available() != 0);
 
-            System.out.println(socket.getInetAddress()+ " says " + message + " with a length of: " + message.length());
-            Thread.sleep(200);
-            outputStream.write(message.getBytes());
+            Request request = RequestHandler.RequestParser(message);
+
+            if (request.getMethod() == HTTPMethod.GET){
+                if (request.getUri().equals("/")){
+                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                    File file = new File(classloader.getResource("index.html").getPath());
+                    Path path = file.toPath();
+                    //FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    Response response = new Response();
+                    response.appendHeader("HTTP/1.1 200 OK");
+                    response.appendHeader("Content-Type: text/html");
+                    response.setBody(Files.readAllBytes(path));
+                    outputStream.write(response.getHeader());
+                    outputStream.write(response.getBody());
+                }
+                if (request.getUri().equals("/index.css")){
+                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                    File file = new File(classloader.getResource("static/index.css").getPath());
+                    Path path = file.toPath();
+                    //FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    Response response = new Response();
+                    response.appendHeader("HTTP/1.1 200 OK");
+                    //response.appendHeader("Content-Type: text/html");
+                    response.setBody(Files.readAllBytes(path));
+                    outputStream.write(response.getHeader());
+                    outputStream.write(response.getBody());
+                }
+                if (request.getUri().equals("/gnu.png")){
+                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                    File file = new File(classloader.getResource("img/gnu.png").getPath());
+                    Path path = file.toPath();
+                    //FileOutputStream fileOutputStream = new FileOutputStream(file);
+                    Response response = new Response();
+                    response.appendHeader("HTTP/1.1 200 OK");
+                    //response.appendHeader("Content-Type: text/html");
+                    response.setBody(Files.readAllBytes(path));
+                    outputStream.write(response.getHeader());
+                    outputStream.write(response.getBody());
+                }
+            }
+            else {
+                outputStream.write(message.getBytes());
+            }
+            System.out.println(request);
+            outputStream.close();
+
+            Thread.sleep(100);
+
 
         }
         catch (Exception e){

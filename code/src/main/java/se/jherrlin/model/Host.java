@@ -27,11 +27,11 @@ public abstract class Host {
         // Validation and/or default values are set
         this.mode = cmd.getOptionValue("m");
         this.ip = cmd.getOptionValue("i") == null ? "0.0.0.0" : cmd.getOptionValue("i");
-        this.message = cmd.getOptionValue("x") == null ? "herro" : cmd.getOptionValue("x");
+        this.message = cmd.getOptionValue("x") == null ? "GET http://www.server.com/page.html HTTP/1.1\n\nHeaders" : cmd.getOptionValue("x");
 
         try{
             this.port = cmd.getOptionValue("p") == null ? 4950 : Integer.parseInt(cmd.getOptionValue("p"));
-            this.bufsize = cmd.getOptionValue("b") == null ? 1024 : Integer.parseInt(cmd.getOptionValue("b"));
+            this.bufsize = cmd.getOptionValue("b") == null ? 20 : Integer.parseInt(cmd.getOptionValue("b"));
             this.mtr = cmd.getOptionValue("t") == null ? 1 : Integer.parseInt(cmd.getOptionValue("t"));
             this.seconds = cmd.getOptionValue("s") == null ? 1 : Integer.parseInt(cmd.getOptionValue("s"));  // Elvis has just left the building
         }catch(NumberFormatException e){
@@ -68,7 +68,7 @@ public abstract class Host {
             LOG.debug("seconds cant be below 1 second.");
             return false;
         }
-        
+
         return true;
     }
 
