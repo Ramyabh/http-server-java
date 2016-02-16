@@ -25,7 +25,7 @@ public class RequestHandler {
         try{
             requestString = requestStringIn.split("\\r\\n");
             headers = requestString[0];
-            body = requestString[1];
+            //body = requestString[1];
         }
         catch (IndexOutOfBoundsException e){
             e.printStackTrace();
