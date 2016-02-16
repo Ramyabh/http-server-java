@@ -81,7 +81,7 @@ class ServerThread extends Thread {
 
             // Start handeling the request
             if (request.getMethod() == HTTPMethod.GET){
-                if (request.getUri().equals("/") || request.getUri().equals("/index.html")){
+                if (request.getUri().equals("/")){
                     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                     File file = new File(classloader.getResource("index.html").getPath());
                     Path path = file.toPath();
@@ -91,7 +91,7 @@ class ServerThread extends Thread {
                     outputStream.write(response.getHeader());
                     outputStream.write(response.getBody());
                 }
-                if (request.getUri().contains("/static/")){
+                if (!request.getUri().equals("/")){
                     response.appendHeader(Header.response_200_ok);
                     response.setBody(StaticHandler.findStaticFile(request.getUri()));
                     outputStream.write(response.getHeader());
