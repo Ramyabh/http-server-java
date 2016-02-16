@@ -11,11 +11,8 @@ import java.nio.file.Path;
 
 import org.apache.commons.cli.CommandLine;
 
-import se.jherrlin.model.HTTPMethod;
-import se.jherrlin.model.Host;
+import se.jherrlin.model.*;
 import se.jherrlin.handlers.*;
-import se.jherrlin.model.Request;
-import se.jherrlin.model.Response;
 
 public class TCPServer extends Host{
 
@@ -79,22 +76,23 @@ class ServerThread extends Thread {
             // Start parsing the request
             Request request = RequestHandler.RequestParser(message);
 
+            // Create empty response
+            Response response = new Response();
+
             // Start handeling the request
             if (request.getMethod() == HTTPMethod.GET){
                 if (request.getUri().equals("/") || request.getUri().equals("/index.html")){
                     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                     File file = new File(classloader.getResource("index.html").getPath());
                     Path path = file.toPath();
-                    Response response = new Response();
-                    response.appendHeader("HTTP/1.1 200 OK");
-                    response.appendHeader("Content-Type: text/html");
+                    response.appendHeader(Header.response_200_ok);
+                    response.appendHeader(Header.header_content_type_texthtml);
                     response.setBody(Files.readAllBytes(path));
                     outputStream.write(response.getHeader());
                     outputStream.write(response.getBody());
                 }
                 if (request.getUri().contains("/static/")){
-                    Response response = new Response();
-                    response.appendHeader("HTTP/1.1 200 OK");
+                    response.appendHeader(Header.response_200_ok);
                     response.setBody(StaticHandler.findStaticFile(request.getUri()));
                     outputStream.write(response.getHeader());
                     outputStream.write(response.getBody());

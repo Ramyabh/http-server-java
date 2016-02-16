@@ -28,7 +28,7 @@ public class RequestHandler {
             body = requestString[1];
         }
         catch (IndexOutOfBoundsException e){
-
+            e.printStackTrace();
         }
 
         // Try to split up header
@@ -37,7 +37,7 @@ public class RequestHandler {
                 String[] header = headers.split("\\n");
                 String[] requestMethod = header[0].split("\\s+");
                 requestObject.setMethod(evalHTTPMethod(requestMethod[0]));
-                requestObject.setUri(requestMethod[1]);
+                requestObject.setUri(handleTrailingSlash(requestMethod[1]));
                 requestObject.setHttpversion(requestMethod[2]);
                 return requestObject;
             }
@@ -45,10 +45,6 @@ public class RequestHandler {
                 e.printStackTrace();
             }
         }
-
-
-        //String[] firstLine = lines[0].split("\\s+");
-
 
         return new Request(HTTPMethod.NOTVALID, "Bad", "Bad");
     }
@@ -83,5 +79,18 @@ public class RequestHandler {
         }
 
         return HTTPMethod.NOTVALID;
+    }
+
+    private static String handleTrailingSlash(String uri){
+
+        // Remove trailing slash
+        if ((uri.charAt(uri.length()-1) == '/') && (uri.length() > 1)){
+            StringBuilder sb = new StringBuilder(uri);
+            sb.deleteCharAt(uri.length()-1);
+            return sb.toString();
+        }
+
+        System.out.println(uri);
+        return uri;
     }
 }
