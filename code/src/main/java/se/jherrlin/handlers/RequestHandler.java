@@ -11,18 +11,77 @@ import java.util.regex.Pattern;
  */
 public class RequestHandler {
 
-    public static Request RequestParser(String request){
+    // This classes will be ugly, a lot of parsing
 
-        String[] lines = request.split("\\n");
-        if (lines.length < 1){ new String("Not a valid HTTP protocol"); };
+    public static Request RequestParser(String requestStringIn){
 
-        Pattern getPattern = Pattern.compile("(\\s|^)GET(\\s|$)", Pattern.CASE_INSENSITIVE);
-        Matcher getMatcher = getPattern.matcher(lines[0]);
+        //System.out.println(requestStringIn);
+        String[] requestString = null;
+        String headers = null;
+        String body = null;
+        Request requestObject = new Request();
 
-        if (getMatcher.find()){
-            String[] firstLine = lines[0].split("\\s+");
-            return new Request(HTTPMethod.GET, firstLine[1], firstLine[2]);
+        // Try to split header and body
+        try{
+            requestString = requestStringIn.split("\\r\\n");
+            headers = requestString[0];
+            body = requestString[1];
         }
+        catch (IndexOutOfBoundsException e){
+
+        }
+
+        // Try to split up header
+        if (headers != null){
+            try{
+                String[] header = headers.split("\\n");
+                String[] requestMethod = header[0].split("\\s+");
+                requestObject.setMethod(evalHTTPMethod(requestMethod[0]));
+                requestObject.setUri(requestMethod[1]);
+                requestObject.setHttpversion(requestMethod[2]);
+                return requestObject;
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+        //String[] firstLine = lines[0].split("\\s+");
+
+
         return new Request(HTTPMethod.NOTVALID, "Bad", "Bad");
+    }
+
+    private static HTTPMethod evalHTTPMethod(String method){
+        // GET Request
+        Pattern getPattern = Pattern.compile("(\\s|^)GET(\\s|$)", Pattern.CASE_INSENSITIVE);
+        Matcher getMatcher = getPattern.matcher(method);
+        if (getMatcher.find()){
+            return HTTPMethod.GET;
+        }
+
+        // POST request
+        getPattern = Pattern.compile("(\\s|^)POST(\\s|$)", Pattern.CASE_INSENSITIVE);
+        getMatcher = getPattern.matcher(method);
+        if (getMatcher.find()){
+            return HTTPMethod.POST;
+        }
+
+        // PUT request
+        getPattern = Pattern.compile("(\\s|^)PUT(\\s|$)", Pattern.CASE_INSENSITIVE);
+        getMatcher = getPattern.matcher(method);
+        if (getMatcher.find()){
+            return HTTPMethod.PUT;
+        }
+
+        // DELETE request
+        getPattern = Pattern.compile("(\\s|^)DELETE(\\s|$)", Pattern.CASE_INSENSITIVE);
+        getMatcher = getPattern.matcher(method);
+        if (getMatcher.find()){
+            return HTTPMethod.DELETE;
+        }
+
+        return HTTPMethod.NOTVALID;
     }
 }

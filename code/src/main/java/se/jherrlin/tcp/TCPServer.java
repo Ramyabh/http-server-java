@@ -8,7 +8,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.apache.commons.cli.CommandLine;
 
@@ -69,21 +68,23 @@ class ServerThread extends Thread {
             // message from client
             String message = "";
 
+            // Handle the tcp stream
             do {
                 buf = new byte[bufsize];
                 inputStream.read(buf);
-                message += new String(buf).trim();
+                message += new String(buf);
             }
             while (inputStream.available() != 0);
 
+            // Start parsing the request
             Request request = RequestHandler.RequestParser(message);
 
+            // Start handeling the request
             if (request.getMethod() == HTTPMethod.GET){
-                if (request.getUri().equals("/")){
+                if (request.getUri().equals("/") || request.getUri().equals("/index.html")){
                     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                     File file = new File(classloader.getResource("index.html").getPath());
                     Path path = file.toPath();
-                    //FileOutputStream fileOutputStream = new FileOutputStream(file);
                     Response response = new Response();
                     response.appendHeader("HTTP/1.1 200 OK");
                     response.appendHeader("Content-Type: text/html");
@@ -91,27 +92,10 @@ class ServerThread extends Thread {
                     outputStream.write(response.getHeader());
                     outputStream.write(response.getBody());
                 }
-                if (request.getUri().equals("/index.css")){
-                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    File file = new File(classloader.getResource("static/index.css").getPath());
-                    Path path = file.toPath();
-                    //FileOutputStream fileOutputStream = new FileOutputStream(file);
+                if (request.getUri().contains("/static/")){
                     Response response = new Response();
                     response.appendHeader("HTTP/1.1 200 OK");
-                    //response.appendHeader("Content-Type: text/html");
-                    response.setBody(Files.readAllBytes(path));
-                    outputStream.write(response.getHeader());
-                    outputStream.write(response.getBody());
-                }
-                if (request.getUri().equals("/gnu.png")){
-                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    File file = new File(classloader.getResource("img/gnu.png").getPath());
-                    Path path = file.toPath();
-                    //FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    Response response = new Response();
-                    response.appendHeader("HTTP/1.1 200 OK");
-                    //response.appendHeader("Content-Type: text/html");
-                    response.setBody(Files.readAllBytes(path));
+                    response.setBody(StaticHandler.findStaticFile(request.getUri()));
                     outputStream.write(response.getHeader());
                     outputStream.write(response.getBody());
                 }
