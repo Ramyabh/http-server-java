@@ -84,7 +84,7 @@ class ServerThread extends Thread {
                 StaticHandler.findStaticFile(request.getUri(), response);
                 LOG.debug(request);
                 LOG.debug(response);
-                outputStream.write(response.getHeader());
+                outputStream.write(response.getHeaders());
                 outputStream.write(response.getBody());
             }
             else {

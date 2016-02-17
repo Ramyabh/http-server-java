@@ -1,24 +1,37 @@
 package se.jherrlin.model;
 
 
+import java.util.ArrayList;
+
 public class Response {
-    String header = new String("");
+    String response;
+    ArrayList<String> headers = new ArrayList<String>();
     byte[] body;
 
     public Response() {
     }
 
-    public byte[] getHeader() {
-        this.header += "\r\n";
-        return header.getBytes();
-    }
-
-    public void setHeader(String header) {
-        this.header = header;
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public void appendHeader(String header){
-        this.header += header += "\n";
+        this.headers.add(header);
+    }
+
+    public byte[] getHeaders() {
+        String header = "";
+        header += response;
+        header += "\r\n";  // Response
+
+        for (String s: headers){
+            header += s;
+            header += "\n";
+        }
+
+        header += "\r\n";
+
+        return header.getBytes();
     }
 
     public byte[] getBody() {
@@ -31,8 +44,14 @@ public class Response {
 
     @Override
     public String toString() {
-        return "Response{" +
-                "header='" + header + '\'' +
-                '}';
+        String toString = "";
+        toString += "Response{" + response + ",";
+        for (String s : headers) {
+            toString += s;
+            toString += " ,";
+        }
+
+        toString += " }";
+        return toString;
     }
 }
