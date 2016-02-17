@@ -1,15 +1,11 @@
 package se.jherrlin.tcp;
 
-/**
- * Created by John Herrlin on 2/12/16.
- */
 
 import java.io.*;
 import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.log4j.Logger;
 
 import se.jherrlin.model.*;
 import se.jherrlin.handlers.*;
@@ -40,6 +36,8 @@ public class TCPServer extends Host{
 }
 
 class ServerThread extends Thread {
+
+    final Logger LOG = Logger.getLogger(this.getClass().getSimpleName());
 
     Socket socket;
     int bufsize;
@@ -75,22 +73,24 @@ class ServerThread extends Thread {
 
             // Start parsing the request
             Request request = RequestHandler.RequestParser(message);
+            request.setClientAddress(this.socket.getLocalAddress().toString());
+            request.setClientPort(this.socket.getPort());
 
             // Create empty response
             Response response = new Response();
 
             // Start handeling the request
             if (request.getMethod() == HTTPMethod.GET){
-                //response.appendHeader(Header.response_200_ok);
-                //response.appendHeader(Header.header_content_type_texthtml);
                 StaticHandler.findStaticFile(request.getUri(), response);
+                LOG.debug(request);
+                LOG.debug(response);
                 outputStream.write(response.getHeader());
                 outputStream.write(response.getBody());
             }
             else {
                 outputStream.write(message.getBytes());
             }
-            System.out.println(request);
+            //System.out.println(request);
             outputStream.close();
 
             Thread.sleep(100);

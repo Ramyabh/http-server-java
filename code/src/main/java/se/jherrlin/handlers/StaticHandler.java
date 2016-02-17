@@ -7,9 +7,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Created by nils on 2/16/16.
- */
+
 public class StaticHandler {
 
     public static void findStaticFile(String filenameIn, Response responseIn){
@@ -44,6 +42,8 @@ public class StaticHandler {
                 try{
                     File html = new File(file.getPath()+"/index.html");
                     Path htmlPath = html.toPath();
+                    response.appendHeader(Header.response_200_ok);
+                    response.appendHeader(Header.header_content_type_texthtml);
                     response.setBody(Files.readAllBytes(htmlPath));
                     return;
                 }
@@ -55,6 +55,8 @@ public class StaticHandler {
                 try{
                     File htm = new File(file.getPath()+"/index.htm");
                     Path htmPath = htm.toPath();
+                    response.appendHeader(Header.response_200_ok);
+                    response.appendHeader(Header.header_content_type_texthtml);
                     response.setBody(Files.readAllBytes(htmPath));
                     return;
                 }
@@ -63,6 +65,8 @@ public class StaticHandler {
                     response.setHeader(Header.response_404_notfound);
                 }
             }
+
+            response.setHeader(Header.response_404_notfound);
             return;
         }
         catch (Exception e){

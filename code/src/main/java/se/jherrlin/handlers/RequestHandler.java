@@ -6,9 +6,7 @@ import se.jherrlin.model.Request;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by nils on 2/15/16.
- */
+
 public class RequestHandler {
 
     // This classes will be ugly, a lot of parsing
@@ -83,14 +81,13 @@ public class RequestHandler {
 
     private static String handleTrailingSlash(String uri){
 
-        // Remove trailing slash
+        // Remove trailing slash, if exists
         if ((uri.charAt(uri.length()-1) == '/') && (uri.length() > 1)){
             StringBuilder sb = new StringBuilder(uri);
             sb.deleteCharAt(uri.length()-1);
             return sb.toString();
         }
 
-        System.out.println(uri);
         return uri;
     }
 }

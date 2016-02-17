@@ -1,8 +1,6 @@
 package se.jherrlin.model;
 
-/**
- * Created by nils on 2/16/16.
- */
+
 public class Header {
 
     public static String response_200_ok = "HTTP/1.1 200 OK";

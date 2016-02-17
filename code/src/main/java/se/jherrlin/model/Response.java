@@ -1,8 +1,6 @@
 package se.jherrlin.model;
 
-/**
- * Created by nils on 2/15/16.
- */
+
 public class Response {
     String header = new String("");
     byte[] body;
@@ -29,5 +27,12 @@ public class Response {
 
     public void setBody(byte[] body) {
         this.body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "Response{" +
+                "header='" + header + '\'' +
+                '}';
     }
 }

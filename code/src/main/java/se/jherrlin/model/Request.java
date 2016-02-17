@@ -1,12 +1,12 @@
 package se.jherrlin.model;
 
-/**
- * Created by nils on 2/15/16.
- */
+
 public class Request {
     private HTTPMethod method;
     private String uri;
     private String httpversion;
+    private String clientAddress;
+    private int clientPort;
 
     public Request() {
     }
@@ -41,12 +41,30 @@ public class Request {
         this.httpversion = httpversion;
     }
 
+    public String getClientAddress() {
+        return clientAddress;
+    }
+
+    public void setClientAddress(String clientAddress) {
+        this.clientAddress = clientAddress;
+    }
+
+    public int getClientPort() {
+        return clientPort;
+    }
+
+    public void setClientPort(int clientPort) {
+        this.clientPort = clientPort;
+    }
+
     @Override
     public String toString() {
         return "Request{" +
                 "method=" + method +
                 ", uri='" + uri + '\'' +
                 ", httpversion='" + httpversion + '\'' +
+                ", clientAddress='" + clientAddress + '\'' +
+                ", clientPort=" + clientPort +
                 '}';
     }
 }
