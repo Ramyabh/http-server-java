@@ -6,6 +6,7 @@ public class Request {
     private String uri;
     private String httpversion;
     private String clientAddress;
+    private String body;
     private int clientPort;
 
     public Request() {
@@ -49,6 +50,14 @@ public class Request {
         this.clientAddress = clientAddress;
     }
 
+    public String getBody() {
+        return this.body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
     public int getClientPort() {
         return clientPort;
     }
@@ -64,7 +73,8 @@ public class Request {
                 ", uri='" + uri + '\'' +
                 ", httpversion='" + httpversion + '\'' +
                 ", clientAddress='" + clientAddress + '\'' +
-                ", clientPort=" + clientPort +
+                ", clientPort=" + clientPort + '\'' +
+                ", body=" + body +
                 '}';
     }
 }

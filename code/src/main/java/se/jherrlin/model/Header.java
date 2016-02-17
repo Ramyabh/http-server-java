@@ -4,6 +4,7 @@ package se.jherrlin.model;
 public class Header {
 
     public static String response_200_ok = "HTTP/1.1 200 OK";
+    public static String response_201_created = "HTTP/1.1 201 Created";
     public static String response_403_forbidden = "HTTP/1.1 403 Forbidden";
     public static String response_404_notfound = "HTTP/1.1 404 Not Found";
     public static String response_500_servererror = "HTTP/1.1 500 Server Error";

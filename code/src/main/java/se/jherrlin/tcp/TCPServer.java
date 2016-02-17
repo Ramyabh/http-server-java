@@ -87,6 +87,16 @@ class ServerThread extends Thread {
                 outputStream.write(response.getHeaders());
                 outputStream.write(response.getBody());
             }
+            if (request.getMethod() == HTTPMethod.POST){
+                //StaticHandler.findStaticFile(request.getUri(), response);
+                response.setResponse(Header.response_201_created);
+                response.appendHeader(Header.header_content_type_texthtml);
+                response.setBody(request.getBody().getBytes());
+                LOG.debug(request);
+                LOG.debug(response);
+                outputStream.write(response.getHeaders());
+                outputStream.write(response.getBody());
+            }
             else {
                 outputStream.write(message.getBytes());
             }

@@ -21,9 +21,11 @@ public class RequestHandler {
 
         // Try to split header and body
         try{
-            requestString = requestStringIn.split("\\r\\n");
+            requestString = requestStringIn.split("\r\n\r\n");
             headers = requestString[0];
-            //body = requestString[1];
+            if ((requestString[1].length()) > 0 && (requestString[1] != null)){
+                requestObject.setBody(requestString[1]);
+            }
         }
         catch (IndexOutOfBoundsException e){
             e.printStackTrace();
