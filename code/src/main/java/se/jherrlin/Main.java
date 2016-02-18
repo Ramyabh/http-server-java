@@ -1,6 +1,7 @@
 package se.jherrlin;
 
 import org.apache.commons.cli.*;
+import se.jherrlin.model.Host;
 import se.jherrlin.tcp.TCPClient;
 import se.jherrlin.tcp.TCPServer;
 import se.jherrlin.udp.UDPClient;
@@ -47,59 +48,36 @@ public class Main
             // check what -m option is set
             if (cmd.hasOption("m")){
 
+                Host host = null;
+
                 if (cmd.getOptionValue("m").equals("udpserver")){
-                    udpserver = new UDPServer(cmd);
-                    if (udpserver.valid()){
-                        udpserver.run();
-                    }
-                    else {
-                        help(options);
-                    }
+                    host = new UDPServer(cmd);
                 }
+
                 else if (cmd.getOptionValue("m").equals("udpclient")){
-                    udpclient = new UDPClient(cmd);
-                    if (udpclient.valid()){
-                        udpclient.run();
-                    }
-                    else {
-                        help(options);
-                    }
-                }
-                else if (cmd.getOptionValue("m").equals("tcpclient")){
-                    tcpclient = new TCPClient(cmd);
-                    if (tcpclient.valid()){
-                        try {
-                            tcpclient.run();
-                        }
-                        catch (Exception e){
-                            help(options);
-                            System.exit(1);
-                        }
-                    }
-                    else {
-                        help(options);
-                    }
+                    host = new UDPClient(cmd);
                 }
 
                 else if (cmd.getOptionValue("m").equals("tcpserver")){
-                    tcpserver = new TCPServer(cmd);
-                    if (tcpserver.valid()){
-                        try {
-                            tcpserver.run();
-                        }
-                        catch (Exception e){
-                            help(options);
-                            System.exit(1);
-                        }
-                    }
-                    else {
-                        help(options);
-                    }
+                    host = new TCPServer(cmd);
                 }
 
+                else if (cmd.getOptionValue("m").equals("tcpclient")){
+                    host = new TCPClient(cmd);
+                }
 
                 else {
                     help(options);
+                    System.exit(1);
+                }
+
+                if (host.valid()){
+                    try{
+                        host.run();
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -109,7 +87,7 @@ public class Main
 
         }
         catch (NullPointerException e){
-            System.err.println("Missign arguments options");
+            System.err.println("Missing arguments options");
             help(options);
         }
 
