@@ -13,7 +13,6 @@ public class RequestHandler {
 
     public static Request RequestParser(String requestStringIn){
 
-        //System.out.println(requestStringIn);
         String[] requestString = null;
         String headers = null;
         String body = null;
@@ -34,11 +33,20 @@ public class RequestHandler {
         // Try to split up header
         if (headers != null){
             try{
-                String[] header = headers.split("\\n");
+                String[] header = headers.split("\r\n");
                 String[] requestMethod = header[0].split("\\s+");
+
+                // Parse the first row in the request header and add to
+                // the requestObject.
                 requestObject.setMethod(evalHTTPMethod(requestMethod[0]));
                 requestObject.setUri(handleTrailingSlash(requestMethod[1]));
                 requestObject.setHttpversion(requestMethod[2]);
+
+                // Append headers to requestObject, skip first
+                // we already took care of that.
+                for (int i = 1; i < header.length; i++) {
+                    requestObject.appendHeader(header[i]);
+                }
                 return requestObject;
             }
             catch (Exception e){

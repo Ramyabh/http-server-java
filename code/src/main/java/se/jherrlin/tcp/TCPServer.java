@@ -87,7 +87,9 @@ class ServerThread extends Thread {
                 outputStream.write(response.getHeaders());
                 outputStream.write(response.getBody());
             }
-            if (request.getMethod() == HTTPMethod.POST){
+
+            // Post
+            else if (request.getMethod() == HTTPMethod.POST){
                 //StaticHandler.findStaticFile(request.getUri(), response);
                 response.setResponse(Header.response_201_created);
                 response.appendHeader(Header.header_content_type_texthtml);
@@ -97,8 +99,21 @@ class ServerThread extends Thread {
                 outputStream.write(response.getHeaders());
                 outputStream.write(response.getBody());
             }
+
+            // Bad request
+            else if (request.getMethod() == HTTPMethod.NOTVALID){
+                response.setResponse(Header.response_400_badrequest);
+                response.setBody(Header.response_400_badrequest.getBytes());
+                LOG.debug(request);
+                LOG.debug(response);
+                outputStream.write(response.getHeaders());
+                outputStream.write(response.getBody());
+            }
             else {
-                outputStream.write(message.getBytes());
+                // CANTHANDLE
+                // Log if we cant handle it.
+                LOG.debug("CANTHANDLE: "+message);
+                //outputStream.write(message.getBytes());
             }
             //System.out.println(request);
             outputStream.close();

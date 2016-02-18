@@ -1,12 +1,15 @@
 package se.jherrlin.model;
 
 
+import java.util.ArrayList;
+
 public class Request {
     private HTTPMethod method;
     private String uri;
     private String httpversion;
     private String clientAddress;
     private String body;
+    private ArrayList<String> headers = new ArrayList<String>();
     private int clientPort;
 
     public Request() {
@@ -56,6 +59,18 @@ public class Request {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public ArrayList<String> getHeaders() {
+        return headers;
+    }
+
+    public void appendHeader(String header){
+        headers.add(header);
+    }
+
+    public void setHeaders(ArrayList<String> headers) {
+        this.headers = headers;
     }
 
     public int getClientPort() {
