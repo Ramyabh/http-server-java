@@ -100,6 +100,7 @@ class ServerThread extends Thread {
 
                 Db.initDb();
                 Blog blog = new Blog(UUID.randomUUID(), request.getBody(), request.getBody());
+                LOG.debug(blog.getHeader() + " created");
                 blog.create();
                 LOG.debug(request);
                 LOG.debug(response);

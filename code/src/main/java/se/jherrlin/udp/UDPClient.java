@@ -63,7 +63,7 @@ public class UDPClient extends Host {
                     MSG.length(),
                     remoteBindPoint
             );
-        } catch (SocketException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

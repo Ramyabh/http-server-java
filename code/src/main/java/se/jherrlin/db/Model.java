@@ -15,8 +15,6 @@ import java.util.UUID;
  */
 public class Model implements Serializable{
 
-    final Logger LOG = Logger.getLogger(this.getClass().getSimpleName());
-
     public boolean create(){
         try {
             Class.forName("org.sqlite.JDBC");
@@ -33,6 +31,7 @@ public class Model implements Serializable{
 
         }
         catch (Exception e){
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -57,10 +56,8 @@ public class Model implements Serializable{
                 ByteArrayInputStream baip = new ByteArrayInputStream(st);
                 ObjectInputStream ois = new ObjectInputStream(baip);
                 Blog emp = (Blog) ois.readObject();
+                System.out.println(emp.getHeader());
                 blogArrayList.add(emp);
-//                System.out.println(emp.getHeader());
-//                System.out.println(emp.getText());
-//                System.out.println(emp.getUuid());
             }
             stmt.close();
             rs.close();
@@ -73,5 +70,17 @@ public class Model implements Serializable{
         return blogArrayList;
     }
 
-    public static Object getByUuid(){return new Object();}
+    public static Blog getById(){
+
+        return null;
+
+    }
+
+    public static void main(String[] args) {
+
+        System.out.println(Model.getAll().size());
+        for (Blog blog: Model.getAll()){
+            System.out.printf(blog.getHeader());
+        }
+    }
 }
