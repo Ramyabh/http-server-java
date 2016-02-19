@@ -1,10 +1,11 @@
 package se.jherrlin.handlers;
 
-import se.jherrlin.model.HTTPMethod;
-import se.jherrlin.model.Request;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+
+import se.jherrlin.model.Request;
 
 
 public class RequestHandler {
@@ -12,6 +13,8 @@ public class RequestHandler {
     // This classes will be ugly, a lot of parsing
 
     public static Request RequestParser(String requestStringIn){
+
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
 
         String[] requestString = null;
         String headers = null;
@@ -27,6 +30,7 @@ public class RequestHandler {
             }
         }
         catch (IndexOutOfBoundsException e){
+            LOG.debug(requestStringIn);
             e.printStackTrace();
         }
 
@@ -54,39 +58,39 @@ public class RequestHandler {
             }
         }
 
-        return new Request(HTTPMethod.NOTVALID, "Bad", "Bad");
+        return new Request(Request.HTTPMethod.NOTVALID, "Bad", "Bad");
     }
 
-    private static HTTPMethod evalHTTPMethod(String method){
+    private static Request.HTTPMethod evalHTTPMethod(String method){
         // GET Request
         Pattern getPattern = Pattern.compile("(\\s|^)GET(\\s|$)", Pattern.CASE_INSENSITIVE);
         Matcher getMatcher = getPattern.matcher(method);
         if (getMatcher.find()){
-            return HTTPMethod.GET;
+            return Request.HTTPMethod.GET;
         }
 
         // POST request
         getPattern = Pattern.compile("(\\s|^)POST(\\s|$)", Pattern.CASE_INSENSITIVE);
         getMatcher = getPattern.matcher(method);
         if (getMatcher.find()){
-            return HTTPMethod.POST;
+            return Request.HTTPMethod.POST;
         }
 
         // PUT request
         getPattern = Pattern.compile("(\\s|^)PUT(\\s|$)", Pattern.CASE_INSENSITIVE);
         getMatcher = getPattern.matcher(method);
         if (getMatcher.find()){
-            return HTTPMethod.PUT;
+            return Request.HTTPMethod.PUT;
         }
 
         // DELETE request
         getPattern = Pattern.compile("(\\s|^)DELETE(\\s|$)", Pattern.CASE_INSENSITIVE);
         getMatcher = getPattern.matcher(method);
         if (getMatcher.find()){
-            return HTTPMethod.DELETE;
+            return Request.HTTPMethod.DELETE;
         }
 
-        return HTTPMethod.NOTVALID;
+        return Request.HTTPMethod.NOTVALID;
     }
 
     private static String handleTrailingSlash(String uri){

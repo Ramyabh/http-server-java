@@ -3,10 +3,13 @@ package se.jherrlin.tcp;
 
 import java.io.*;
 import java.net.*;
+import java.util.UUID;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.log4j.Logger;
 
+import se.jherrlin.db.Db;
+import se.jherrlin.domain.Blog;
 import se.jherrlin.model.*;
 import se.jherrlin.handlers.*;
 
@@ -80,7 +83,7 @@ class ServerThread extends Thread {
             Response response = new Response();
 
             // Start handeling the request
-            if (request.getMethod() == HTTPMethod.GET){
+            if (request.getMethod() == Request.HTTPMethod.GET){
                 StaticHandler.findStaticFile(request.getUri(), response);
                 LOG.debug(request);
                 LOG.debug(response);
@@ -89,11 +92,15 @@ class ServerThread extends Thread {
             }
 
             // Post
-            else if (request.getMethod() == HTTPMethod.POST){
+            else if (request.getMethod() == Request.HTTPMethod.POST){
                 //StaticHandler.findStaticFile(request.getUri(), response);
                 response.setResponse(Header.response_201_created);
                 response.appendHeader(Header.header_content_type_texthtml);
                 response.setBody(request.getBody().getBytes());
+
+                Db.initDb();
+                Blog blog = new Blog(UUID.randomUUID(), request.getBody(), request.getBody());
+                blog.create();
                 LOG.debug(request);
                 LOG.debug(response);
                 outputStream.write(response.getHeaders());
@@ -101,7 +108,7 @@ class ServerThread extends Thread {
             }
 
             // Bad request
-            else if (request.getMethod() == HTTPMethod.NOTVALID){
+            else if (request.getMethod() == Request.HTTPMethod.NOTVALID){
                 response.setResponse(Header.response_400_badrequest);
                 response.setBody(Header.response_400_badrequest.getBytes());
                 LOG.debug(request);

@@ -92,4 +92,17 @@ public class Request {
                 ", body=" + body +
                 '}';
     }
+
+    public enum HTTPMethod {
+        GET,
+        POST,
+        PUT,
+        DELETE,
+        HEAD,
+        TRACE,
+        CONNECT,
+        NOTVALID
+    }
 }
+
+
