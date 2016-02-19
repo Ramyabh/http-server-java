@@ -18,7 +18,7 @@ public class Db {
             System.out.println("Opened database successfully");
 
             stmta = c.createStatement();
-            String blog = "CREATE TABLE BLOG (id INTEGER PRIMARY KEY, blog BLOB)";
+            String blog = "CREATE TABLE BLOG (id INTEGER PRIMARY KEY, blog BLOB, uuid TEXT)";
             stmta.executeUpdate(blog);
             stmta.close();
             c.close();

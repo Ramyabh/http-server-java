@@ -99,7 +99,8 @@ class ServerThread extends Thread {
                 response.setBody(request.getBody().getBytes());
 
                 Db.initDb();
-                Blog blog = new Blog(UUID.randomUUID(), request.getBody(), request.getBody());
+                Blog blog = new Blog(request.getBody(), request.getBody());
+                blog.setUuid(UUID.randomUUID().toString());
                 LOG.debug(blog.getHeader() + " created");
                 blog.create();
                 LOG.debug(request);
