@@ -51,6 +51,7 @@ public class Blog extends Model{
         this.text = text;
     }
 
+    // Just for testing
     public static void main(String[] args) {
         Db.initDb();
         Blog blog = new Blog();
