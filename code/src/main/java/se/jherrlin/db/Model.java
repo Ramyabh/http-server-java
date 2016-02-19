@@ -29,14 +29,17 @@ public class Model implements Serializable{
         try {
             Class.forName("org.sqlite.JDBC");
             Connection dbConn = DriverManager.getConnection("jdbc:sqlite:test.db");
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
+           
             oos.writeObject(this);
-            byte[] employeeAsBytes = baos.toByteArray();
+            byte[] blogAsBytes = baos.toByteArray();
             PreparedStatement pstmt = dbConn.prepareStatement("INSERT INTO BLOG (blog, uuid) VALUES(?, ?)");
-            ByteArrayInputStream bais = new ByteArrayInputStream(employeeAsBytes);
-            pstmt.setBinaryStream(1, bais, employeeAsBytes.length);
+            ByteArrayInputStream bais = new ByteArrayInputStream(blogAsBytes);
+            pstmt.setBinaryStream(1, bais, blogAsBytes.length);
             pstmt.setString(2, this.uuid);
+
             pstmt.executeUpdate();
             pstmt.close();
 
@@ -48,7 +51,29 @@ public class Model implements Serializable{
         return true;
     }
 
-    public boolean update(){return true;}
+    public boolean update(){
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection dbConn = DriverManager.getConnection("jdbc:sqlite:test.db");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+            byte[] blogAsBytes = baos.toByteArray();
+
+            PreparedStatement ps = dbConn.prepareStatement("UPDATE BLOG SET blog=? where uuid=?");
+            ByteArrayInputStream bais = new ByteArrayInputStream(blogAsBytes);
+            ps.setBinaryStream(1, bais, blogAsBytes.length);
+            ps.setString(2, this.uuid);
+            ps.executeUpdate();
+
+            ps.close();
+            dbConn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public boolean delete(){return true;}
 
@@ -94,22 +119,30 @@ public class Model implements Serializable{
 
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
             Blog tmp = (Blog) objectInputStream.readObject();
+
+            rs.close();
+            ps.close();
+            dbConn.close();
+
             return tmp;
         } catch (Exception e ) {
             e.printStackTrace();
         }
-
-
         return null;
     }
 
     public static void main(String[] args) {
 
-        /*for (Blog blog: Model.getAll()){
-            System.out.printf(blog.getUuid());
-        }*/
+        String uuid = "";
+        for (Blog blog: Model.getAll()){
+            uuid = blog.getUuid();
+        }
+        System.out.println(Model.getById(uuid).getHeader());
 
-        System.out.println(Model.getById("1a5d1227-ec8a-4640-8820-6262cd80e1a6").getHeader());
+        Blog blog = Model.getById(uuid);
+        blog.setHeader("test");
+        blog.update();
 
+        System.out.println(Model.getById(uuid).getHeader());
     }
 }
