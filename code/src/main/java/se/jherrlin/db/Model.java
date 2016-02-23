@@ -32,7 +32,7 @@ public class Model implements Serializable{
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-           
+
             oos.writeObject(this);
             byte[] blogAsBytes = baos.toByteArray();
             PreparedStatement pstmt = dbConn.prepareStatement("INSERT INTO BLOG (blog, uuid) VALUES(?, ?)");
@@ -106,6 +106,8 @@ public class Model implements Serializable{
     }
 
     public static Blog getById(String uuid){
+        Blog blogPost = null;
+
         try {
             Class.forName("org.sqlite.JDBC");
             Connection dbConn = DriverManager.getConnection("jdbc:sqlite:test.db");
@@ -118,17 +120,16 @@ public class Model implements Serializable{
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(result);
 
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-            Blog tmp = (Blog) objectInputStream.readObject();
+            blogPost = (Blog) objectInputStream.readObject();
 
             rs.close();
             ps.close();
             dbConn.close();
 
-            return tmp;
         } catch (Exception e ) {
             e.printStackTrace();
         }
-        return null;
+        return blogPost;
     }
 
     public static void main(String[] args) {
