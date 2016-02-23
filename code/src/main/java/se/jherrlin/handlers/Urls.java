@@ -28,6 +28,10 @@ public class Urls {
         Pattern mysitePattern = Pattern.compile("^/mysite(.+?|$)$", Pattern.CASE_INSENSITIVE);
         Matcher mysiteMatcher = mysitePattern.matcher(request.getUri());
 
+        // Post /post
+        Pattern postPattern = Pattern.compile("^/post(.+?|$)$");
+        Matcher postMatcher = postPattern.matcher(request.getUri());
+
         if (indexMatcher.find()){
             Views.index(request);
         }
@@ -42,6 +46,10 @@ public class Urls {
 
         else if (mysiteMatcher.find()){
             Views.staticfiles(request);
+        }
+
+        else if (postMatcher.find()) {
+            Views.post(request);
         }
 
         // If we cant match url

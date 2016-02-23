@@ -1,11 +1,14 @@
 package se.jherrlin.handlers;
 
 import org.apache.log4j.Logger;
+import se.jherrlin.db.Db;
+import se.jherrlin.domain.Blog;
 import se.jherrlin.model.Header;
 import se.jherrlin.model.Request;
 import se.jherrlin.model.Response;
 
 import java.rmi.server.ExportException;
+import java.util.UUID;
 
 /**
  * Created by nils on 2/22/16.
@@ -40,6 +43,30 @@ public class Views {
             request.getDataOutputStream().close();
         }
         catch (Exception e){
+            LOG.debug(e);
+        }
+    }
+
+    public static void post(Request request) {
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+        Response response = new Response();
+        response.setResponse(Header.response_201_created);
+        response.appendHeader(Header.header_content_type_texthtml);
+        response.setBody(request.getBody().getBytes());
+
+        Db.initDb();
+        Blog blog = new Blog(request.getBody(), request.getBody());
+        blog.setUuid(UUID.randomUUID().toString());
+        LOG.debug(blog.getHeader() + " created");
+        blog.create();
+        LOG.debug(request);
+        LOG.debug(response);
+
+
+        try {
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(response.getBody());
+        } catch (Exception e) {
             LOG.debug(e);
         }
     }
