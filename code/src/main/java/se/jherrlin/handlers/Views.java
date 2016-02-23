@@ -8,6 +8,9 @@ import se.jherrlin.model.Request;
 import se.jherrlin.model.Response;
 
 import java.rmi.server.ExportException;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -72,6 +75,48 @@ public class Views {
     }
 
     public static void postPicture(Request request) {
+        System.out.println("-!- Not implemented -!-");
+    }
+
+    public static void put(Request request) {
+
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+
+        try {
+            //System.out.println(request.getBody());
+            Response response = new Response();
+            System.out.println(request.bodyDataMap.get("bloguuid"));
+            System.out.println(request.bodyDataMap.get("blogheader"));
+            System.out.println(request.bodyDataMap.get("blogtext"));
+            try{
+                Blog blog = Blog.getById(request.bodyDataMap.get("bloguuid"));
+                blog.setHeader(request.bodyDataMap.get("blogheader"));
+                blog.setText(request.bodyDataMap.get("blogtext"));
+                blog.update();
+                LOG.debug(blog + " updated.");
+            }
+            catch (Exception e){LOG.debug(e);}
+
+            // http://stackoverflow.com/questions/5411538/redirect-from-an-html-page
+            String redirectUrlString = new String("<!DOCTYPE HTML> <html lang=\"en-US\"> <head> <meta charset=\"UTF-8\">\n" +
+                    "<meta http-equiv=\"refresh\" content=\"1;url=/blog\">" +
+                    "<script type=\"text/javascript\">" +
+                    "window.location.href = \"/blog\"" +
+                    "</script>" +
+                    "<title>Page Redirection</title>" +
+                    "</head> <body>" +
+                    "If you are not redirected automatically, follow the <a href='/blog'>Back to update blogs</a>" +
+                    "</body> </html>");
+
+            response.setResponse(Header.response_200_ok);
+            response.appendHeader(Header.header_content_type_texthtml);
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(redirectUrlString.getBytes());
+            request.getDataOutputStream().close();
+        } catch (Exception e) {
+            LOG.debug("Could not handle the put request to: "+request.getUri());
+            LOG.debug("\t"+e);
+        }
 
     }
 
@@ -82,9 +127,23 @@ public class Views {
         try {
             StringBuilder html = new StringBuilder();
             html.append(StaticHandler.getHTMLheader);
+            html.append("<h1>Update blog posts</h1>");
             for (Blog b : Blog.getAll()){
-               html.append("<div>"+b.getText()+"</div>");
+                html.append("<hr>");
+                html.append("<div class=\"row\" align=\"center\">");
+                html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"application/json\" autocomplete=\"off\">");
+                html.append("<input type=\"hidden\" name=\"_method\" value=\"put\" />");
+                html.append("UUID:<br>");
+                html.append("<input type=\"text\" name=\"bloguuid\" value=\""+ b.getUuid()+"\" style=\"width: 100%\"><br>");
+                html.append("Header:<br>");
+                html.append("<input type=\"text\" name=\"blogheader\" value=\""+ b.getHeader()+"\" style=\"width: 100%\"><br>");
+                html.append("Text:<br>");
+                html.append("<input type=\"text\" name=\"blogtext\" value=\""+ b.getText()+"\" style=\"width: 100%\"><br>");
+                html.append("<input type=\"submit\" value=\"Submit\">");
+                html.append("</form>");
+                html.append("</div>");
             }
+
             html.append(StaticHandler.getHTMLfooter);
             Response response = new Response();
             response.setResponse(Header.response_201_created);
@@ -98,7 +157,7 @@ public class Views {
         }
     }
 
-    public static void notfount(Request request) {
+    public static void notfound(Request request) {
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
         try {
             Response response = new Response();
@@ -113,4 +172,5 @@ public class Views {
             LOG.debug(e);
         }
     }
+
 }

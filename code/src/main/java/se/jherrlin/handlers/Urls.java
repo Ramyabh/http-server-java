@@ -32,6 +32,11 @@ public class Urls {
             Views.post(request);
         }
 
+        else if (Pattern.matches("^/put(.+?|$)$", request.getUri())) {
+            Views.put(request);
+        }
+
+
         else if (Pattern.matches("^/postPicture(.+?|$)$", request.getUri())) {
             Views.postPicture(request);
         }
@@ -41,7 +46,7 @@ public class Urls {
         }
 
         // If we cant match url
-        else {Views.notfount(request);}
+        else {Views.notfound(request);}
     }
 
 

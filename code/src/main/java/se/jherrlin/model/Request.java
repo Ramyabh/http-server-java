@@ -3,6 +3,7 @@ package se.jherrlin.model;
 
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Request {
     private HTTPMethod method;
@@ -13,6 +14,7 @@ public class Request {
     private ArrayList<String> headers = new ArrayList<String>();
     private int clientPort;
     private DataOutputStream dataOutputStream;
+    public HashMap<String, String> bodyDataMap = new HashMap<String, String>();
 
     public Request() {
     }

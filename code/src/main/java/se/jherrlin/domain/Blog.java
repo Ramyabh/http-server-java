@@ -16,7 +16,6 @@ public class Blog extends Model{
     }
 
     public Blog(String header, String text) {
-
         this.header = header;
         this.text = text;
     }

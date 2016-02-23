@@ -25,16 +25,15 @@ public class RequestHandler {
         try{
             requestString = requestStringIn.split("\r\n\r\n");
             headers = requestString[0];
-            if ((requestString[1].length()) > 0 && (requestString[1] != null)){
-                requestObject.setBody(requestString[1].trim());
-            }
+            body = requestString[1].trim();
         }
         catch (IndexOutOfBoundsException e){
+            LOG.debug("Failed to split header and body in request.");
             LOG.debug(requestStringIn);
             e.printStackTrace();
         }
 
-        // Try to split up header
+        // Try to split up and parse header
         if (headers != null){
             try{
                 String[] header = headers.split("\r\n");
@@ -54,8 +53,39 @@ public class RequestHandler {
                 return requestObject;
             }
             catch (Exception e){
-                e.printStackTrace();
+                LOG.debug("Failed to parse header request.");
+                LOG.debug("\t"+headers);
+                LOG.debug("\t"+e);
             }
+        }
+
+        // try to parse body
+        try{
+            if (body.length() > 0 && body != null) {
+
+                requestObject.setBody(body);
+
+                String[] data = body.split("&");
+
+                for (String s : data) {
+
+                    // If post request body contains this string, then it is a PUT request
+                    // This is set in the HTML form
+                    if (s.equals("_method=put")) {
+                        requestObject.setMethod(Request.HTTPMethod.PUT);
+                    }
+
+                    // Split up the request body and place KEY, VALUE in a hashmap
+                    String[] datas = s.split("=");
+
+                    requestObject.bodyDataMap.put(datas[0], datas[1]);
+                }
+            }
+        }
+        catch (Exception e){
+            LOG.debug("Failed to parse request body:");
+            LOG.debug("\t"+body);
+            LOG.debug("\t"+e);
         }
 
         return new Request(Request.HTTPMethod.NOTVALID, "Bad", "Bad");
