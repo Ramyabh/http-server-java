@@ -12,51 +12,27 @@ public class Urls {
 
     public static void urls(Request request){
 
-        // Index /
-        Pattern indexPattern = Pattern.compile("/$", Pattern.CASE_INSENSITIVE);
-        Matcher indexMatcher = indexPattern.matcher(request.getUri());
-
-        // Static /static*
-        Pattern staticPattern = Pattern.compile("^/static(.+?|$)$", Pattern.CASE_INSENSITIVE);
-        Matcher staticMatcher = staticPattern.matcher(request.getUri());
-
-        // Form /form.html
-        Pattern formPattern = Pattern.compile("^/form(.+?|$)$", Pattern.CASE_INSENSITIVE);
-        Matcher formMatcher = formPattern.matcher(request.getUri());
-
-        // Page /mysite.html
-        Pattern mysitePattern = Pattern.compile("^/mysite(.+?|$)$", Pattern.CASE_INSENSITIVE);
-        Matcher mysiteMatcher = mysitePattern.matcher(request.getUri());
-
-        // Post /post
-        Pattern postPattern = Pattern.compile("^/post(.+?|$)$");
-        Matcher postMatcher = postPattern.matcher(request.getUri());
-
-        // Post /post
-        Pattern blogPostsPattern = Pattern.compile("^/blog(.+?|$)$");
-        Matcher blogPostsMatcher = blogPostsPattern.matcher(request.getUri());
-
-        if (indexMatcher.find()){
+        if (Pattern.matches("^/$", request.getUri())){
             Views.index(request);
         }
 
-        else if (staticMatcher.find()){
+        else if (Pattern.matches("^/static(.+?|$)$", request.getUri())){
             Views.staticfiles(request);
         }
 
-        else if (formMatcher.find()){
+        else if (Pattern.matches("^/form(.+?|$)$", request.getUri())){
             Views.staticfiles(request);
         }
 
-        else if (mysiteMatcher.find()){
+        else if (Pattern.matches("^/mysite(.+?|$)$", request.getUri())){
             Views.staticfiles(request);
         }
 
-        else if (postMatcher.find()) {
+        else if (Pattern.matches("^/post(.+?|$)$", request.getUri())) {
             Views.post(request);
         }
 
-        else if (blogPostsMatcher.find()) {
+        else if (Pattern.matches("^/blog(.+?|$)$", request.getUri())) {
             Views.getAllBlogPosts(request);
         }
 
