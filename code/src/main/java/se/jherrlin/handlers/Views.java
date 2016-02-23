@@ -62,7 +62,6 @@ public class Views {
         LOG.debug(request);
         LOG.debug(response);
 
-
         try {
             request.getDataOutputStream().write(response.getHeaders());
             request.getDataOutputStream().write(response.getBody());
@@ -72,6 +71,9 @@ public class Views {
         }
     }
 
+    public static void postPicture(Request request) {
+
+    }
 
     public static void getAllBlogPosts(Request request) {
 
@@ -81,8 +83,7 @@ public class Views {
             StringBuilder html = new StringBuilder();
             html.append(StaticHandler.getHTMLheader);
             for (Blog b : Blog.getAll()){
-                html.append("<div>"+b.getHeader()+"</div>");
-                html.append("<div>"+b.getText()+"</div>");
+               html.append("<div>"+b.getText()+"</div>");
             }
             html.append(StaticHandler.getHTMLfooter);
             Response response = new Response();
