@@ -32,6 +32,10 @@ public class Urls {
         Pattern postPattern = Pattern.compile("^/post(.+?|$)$");
         Matcher postMatcher = postPattern.matcher(request.getUri());
 
+        // Post /post
+        Pattern blogPostsPattern = Pattern.compile("^/blog(.+?|$)$");
+        Matcher blogPostsMatcher = blogPostsPattern.matcher(request.getUri());
+
         if (indexMatcher.find()){
             Views.index(request);
         }
@@ -50,6 +54,10 @@ public class Urls {
 
         else if (postMatcher.find()) {
             Views.post(request);
+        }
+
+        else if (blogPostsMatcher.find()) {
+            Views.getAllBlogPosts(request);
         }
 
         // If we cant match url

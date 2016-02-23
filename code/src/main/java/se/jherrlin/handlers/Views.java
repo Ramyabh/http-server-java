@@ -66,6 +66,32 @@ public class Views {
         try {
             request.getDataOutputStream().write(response.getHeaders());
             request.getDataOutputStream().write(response.getBody());
+            request.getDataOutputStream().close();
+        } catch (Exception e) {
+            LOG.debug(e);
+        }
+    }
+
+
+    public static void getAllBlogPosts(Request request) {
+
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+
+        try {
+            StringBuilder html = new StringBuilder();
+            html.append(StaticHandler.getHTMLheader);
+            for (Blog b : Blog.getAll()){
+                html.append("<div>"+b.getHeader()+"</div>");
+                html.append("<div>"+b.getText()+"</div>");
+            }
+            html.append(StaticHandler.getHTMLfooter);
+            Response response = new Response();
+            response.setResponse(Header.response_201_created);
+            response.appendHeader(Header.header_content_type_texthtml);
+            response.setBody(html.toString().getBytes());
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(response.getBody());
+            request.getDataOutputStream().close();
         } catch (Exception e) {
             LOG.debug(e);
         }

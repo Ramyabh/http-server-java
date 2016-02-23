@@ -10,6 +10,9 @@ import java.nio.file.Path;
 
 public class StaticHandler {
 
+    public static String getHTMLheader = "<!DOCTYPE html> <html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <title>Title</title> <link rel=\"stylesheet\" type=\"text/css\" href=\"/static/index.css\"> </head> <body>";
+    public static String getHTMLfooter = "</body> </html>";
+
     public static void findStaticFile(String filenameIn, Response responseIn){
 
         Response response = responseIn;
