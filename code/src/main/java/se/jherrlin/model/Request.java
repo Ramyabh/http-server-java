@@ -1,6 +1,7 @@
 package se.jherrlin.model;
 
 
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 
 public class Request {
@@ -11,6 +12,7 @@ public class Request {
     private String body;
     private ArrayList<String> headers = new ArrayList<String>();
     private int clientPort;
+    private DataOutputStream dataOutputStream;
 
     public Request() {
     }
@@ -79,6 +81,14 @@ public class Request {
 
     public void setClientPort(int clientPort) {
         this.clientPort = clientPort;
+    }
+
+    public DataOutputStream getDataOutputStream() {
+        return dataOutputStream;
+    }
+
+    public void setDataOutputStream(DataOutputStream dataOutputStream) {
+        this.dataOutputStream = dataOutputStream;
     }
 
     @Override

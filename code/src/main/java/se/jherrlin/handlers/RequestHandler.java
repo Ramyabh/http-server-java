@@ -26,7 +26,7 @@ public class RequestHandler {
             requestString = requestStringIn.split("\r\n\r\n");
             headers = requestString[0];
             if ((requestString[1].length()) > 0 && (requestString[1] != null)){
-                requestObject.setBody(requestString[1]);
+                requestObject.setBody(requestString[1].trim());
             }
         }
         catch (IndexOutOfBoundsException e){

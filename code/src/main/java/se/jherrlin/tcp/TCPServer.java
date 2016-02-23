@@ -78,56 +78,58 @@ class ServerThread extends Thread {
             Request request = RequestHandler.RequestParser(message);
             request.setClientAddress(this.socket.getLocalAddress().toString());
             request.setClientPort(this.socket.getPort());
+            request.setDataOutputStream(outputStream);
 
             // Create empty response
-            Response response = new Response();
-
-            // Start handeling the request
-            if (request.getMethod() == Request.HTTPMethod.GET){
-                StaticHandler.findStaticFile(request.getUri(), response);
-                LOG.debug(request);
-                LOG.debug(response);
-                outputStream.write(response.getHeaders());
-                outputStream.write(response.getBody());
-            }
-
-            // Post
-            else if (request.getMethod() == Request.HTTPMethod.POST){
-                //StaticHandler.findStaticFile(request.getUri(), response);
-                response.setResponse(Header.response_201_created);
-                response.appendHeader(Header.header_content_type_texthtml);
-                response.setBody(request.getBody().getBytes());
-
-                Db.initDb();
-                Blog blog = new Blog(request.getBody(), request.getBody());
-                blog.setUuid(UUID.randomUUID().toString());
-                LOG.debug(blog.getHeader() + " created");
-                blog.create();
-                LOG.debug(request);
-                LOG.debug(response);
-                outputStream.write(response.getHeaders());
-                outputStream.write(response.getBody());
-            }
-
-            // Bad request
-            else if (request.getMethod() == Request.HTTPMethod.NOTVALID){
-                response.setResponse(Header.response_400_badrequest);
-                response.setBody(Header.response_400_badrequest.getBytes());
-                LOG.debug(request);
-                LOG.debug(response);
-                outputStream.write(response.getHeaders());
-                outputStream.write(response.getBody());
-            }
-            else {
-                // CANTHANDLE
-                // Log if we cant handle it.
-                LOG.debug("CANTHANDLE: "+message);
-                //outputStream.write(message.getBytes());
-            }
+//            Response response = new Response();
+            Urls.urls(request);
+//
+//            // Start handeling the request
+//            if (request.getMethod() == Request.HTTPMethod.GET){
+//                StaticHandler.findStaticFile(request.getUri(), response);
+//                LOG.debug(request);
+//                LOG.debug(response);
+//                outputStream.write(response.getHeaders());
+//                outputStream.write(response.getBody());
+//            }
+//
+//            // Post
+//            else if (request.getMethod() == Request.HTTPMethod.POST){
+//                //StaticHandler.findStaticFile(request.getUri(), response);
+//                response.setResponse(Header.response_201_created);
+//                response.appendHeader(Header.header_content_type_texthtml);
+//                response.setBody(request.getBody().getBytes());
+//
+//                Db.initDb();
+//                Blog blog = new Blog(request.getBody(), request.getBody());
+//                blog.setUuid(UUID.randomUUID().toString());
+//                LOG.debug(blog.getHeader() + " created");
+//                blog.create();
+//                LOG.debug(request);
+//                LOG.debug(response);
+//                outputStream.write(response.getHeaders());
+//                outputStream.write(response.getBody());
+//            }
+//
+//            // Bad request
+//            else if (request.getMethod() == Request.HTTPMethod.NOTVALID){
+//                response.setResponse(Header.response_400_badrequest);
+//                response.setBody(Header.response_400_badrequest.getBytes());
+//                LOG.debug(request);
+//                LOG.debug(response);
+//                outputStream.write(response.getHeaders());
+//                outputStream.write(response.getBody());
+//            }
+//            else {
+//                // CANTHANDLE
+//                // Log if we cant handle it.
+//                LOG.debug("CANTHANDLE: "+message);
+//                //outputStream.write(message.getBytes());
+//            }
             //System.out.println(request);
-            outputStream.close();
+//            outputStream.close();
 
-            Thread.sleep(100);
+//            Thread.sleep(100);
 
 
         }
