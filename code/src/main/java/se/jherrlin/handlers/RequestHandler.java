@@ -33,6 +33,8 @@ public class RequestHandler {
             e.printStackTrace();
         }
 
+System.out.println(body);
+
         // Try to split up and parse header
         if (headers != null){
             try{
@@ -61,11 +63,12 @@ public class RequestHandler {
 
         // try to parse body
         try{
+            // THIS NEEDS TO BE UPDATED TO PARSE CORRECTLY
             if (body.length() > 0 && body != null) {
 
                 requestObject.setBody(body);
 
-                String[] data = body.split("&");
+                String[] data = body.split("&");  // This is wrong if using text/plain in html form
 
                 for (String s : data) {
 

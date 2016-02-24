@@ -41,8 +41,12 @@ public class Urls {
             Views.postPicture(request);
         }
 
-        else if (Pattern.matches("^/blog(.+?|$)$", request.getUri())) {
+        else if (Pattern.matches("^/blog$", request.getUri())) {
             Views.getAllBlogPosts(request);
+        }
+
+        else if (Pattern.matches("^/blog/edit(.+?|$)$", request.getUri())) {
+            Views.updateAllBlogPosts(request);
         }
 
         // If we cant match url

@@ -55,6 +55,9 @@ public class Views {
         Response response = new Response();
         response.setResponse(Header.response_201_created);
         response.appendHeader(Header.header_content_type_texthtml);
+
+System.out.println(request.getBody());
+
         response.setBody(request.getBody().getBytes());
 
         Db.initDb();
@@ -92,6 +95,7 @@ public class Views {
                 Blog blog = Blog.getById(request.bodyDataMap.get("bloguuid"));
                 blog.setHeader(request.bodyDataMap.get("blogheader"));
                 blog.setText(request.bodyDataMap.get("blogtext"));
+
                 blog.update();
                 LOG.debug(blog + " updated.");
             }
@@ -120,7 +124,7 @@ public class Views {
 
     }
 
-    public static void getAllBlogPosts(Request request) {
+    public static void updateAllBlogPosts(Request request) {
 
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
 
@@ -128,18 +132,20 @@ public class Views {
             StringBuilder html = new StringBuilder();
             html.append(StaticHandler.getHTMLheader);
             html.append("<h1>Update blog posts</h1>");
+            html.append("<h2><a href=\"/blog\">Back</a></h2>");
+            html.append("<h2><a href=\"/\">Home</a></h2>");
             for (Blog b : Blog.getAll()){
                 html.append("<hr>");
                 html.append("<div class=\"row\" align=\"center\">");
-                html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"application/json\" autocomplete=\"off\">");
+                html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"text/plain\" autocomplete=\"off\">");
                 html.append("<input type=\"hidden\" name=\"_method\" value=\"put\" />");
-                html.append("UUID:<br>");
+                html.append("UUID: ! Dont change this !<br>");
                 html.append("<input type=\"text\" name=\"bloguuid\" value=\""+ b.getUuid()+"\" style=\"width: 100%\"><br>");
                 html.append("Header:<br>");
                 html.append("<input type=\"text\" name=\"blogheader\" value=\""+ b.getHeader()+"\" style=\"width: 100%\"><br>");
                 html.append("Text:<br>");
                 html.append("<input type=\"text\" name=\"blogtext\" value=\""+ b.getText()+"\" style=\"width: 100%\"><br>");
-                html.append("<input type=\"submit\" value=\"Submit\">");
+                html.append("<input type=\"submit\" value=\"Update\">");
                 html.append("</form>");
                 html.append("</div>");
             }
@@ -173,4 +179,36 @@ public class Views {
         }
     }
 
+    public static void getAllBlogPosts(Request request) {
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+
+        try {
+            StringBuilder html = new StringBuilder();
+            html.append(StaticHandler.getHTMLheader);
+            html.append("<h1>All blog posts</h1>");
+            html.append("<h2><a href=\"/form.html\">Create</a></h2>");
+            html.append("<h2><a href=\"/blog/edit\">Edit</a></h2>");
+            html.append("<h2><a href=\"/\">Home</a></h2>");
+            for (Blog b : Blog.getAll()){
+                html.append("<hr>");
+                html.append("<div class=\"row\" align=\"center\">");
+                html.append("<h3>Header:</h3><br>");
+                html.append("<div>"+ b.getHeader()+"</div><br>");
+                html.append("<h3>Text:</h3><br>");
+                html.append("<div>"+ b.getText()+"</div><br>");
+                html.append("</div>");
+            }
+
+            html.append(StaticHandler.getHTMLfooter);
+            Response response = new Response();
+            response.setResponse(Header.response_200_ok);
+            response.appendHeader(Header.header_content_type_texthtml);
+            response.setBody(html.toString().getBytes());
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(response.getBody());
+            request.getDataOutputStream().close();
+        } catch (Exception e) {
+            LOG.debug(e);
+        }
+    }
 }

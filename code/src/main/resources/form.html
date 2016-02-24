@@ -6,11 +6,12 @@
 </head>
 <body>
 
-<form action="/post" method="post" accept-charset="UTF-8" enctype="application/json" autocomplete="off">
+<form action="/post" method="POST" enctype="text/plain">
     First name:<br>
     <input type="text" name="firstname" value="Mickey"><br>
     Last name:<br>
     <input type="text" name="lastname" value="Mouse"><br><br>
+    <input type="file" name="pic" accept="image/*"><br>
     <input type="submit" value="Submit">
 </form>
 

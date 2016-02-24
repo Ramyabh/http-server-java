@@ -31,7 +31,7 @@ public abstract class Host {
 
         try{
             this.port = cmd.getOptionValue("p") == null ? 8001 : Integer.parseInt(cmd.getOptionValue("p"));
-            this.bufsize = cmd.getOptionValue("b") == null ? 20 : Integer.parseInt(cmd.getOptionValue("b"));
+            this.bufsize = cmd.getOptionValue("b") == null ? 2048 : Integer.parseInt(cmd.getOptionValue("b"));
             this.mtr = cmd.getOptionValue("t") == null ? 1 : Integer.parseInt(cmd.getOptionValue("t"));
             this.seconds = cmd.getOptionValue("s") == null ? 1 : Integer.parseInt(cmd.getOptionValue("s"));  // Elvis has just left the building
         }catch(NumberFormatException e){

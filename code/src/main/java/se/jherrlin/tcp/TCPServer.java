@@ -70,7 +70,7 @@ class ServerThread extends Thread {
             do {
                 buf = new byte[bufsize];
                 inputStream.read(buf);
-                message += new String(buf);
+                message += new String(buf,"UTF-8");
             }
             while (inputStream.available() != 0);
 
