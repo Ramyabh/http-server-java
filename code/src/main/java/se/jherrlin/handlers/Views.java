@@ -56,13 +56,18 @@ public class Views {
         response.setResponse(Header.response_201_created);
         response.appendHeader(Header.header_content_type_texthtml);
 
-System.out.println(request.getBody());
-
         response.setBody(request.getBody().getBytes());
+        System.out.println("REQUEST BODY: " + request.getBody());
 
         Db.initDb();
-        Blog blog = new Blog(request.getBody(), request.getBody());
+
+        Blog blog = new Blog();
         blog.setUuid(UUID.randomUUID().toString());
+        blog.setHeader(request.bodyDataMap.get("title"));
+        blog.setText(request.bodyDataMap.get("content"));
+        blog.setImgName(request.bodyDataMap.get("fileChooser"));
+        blog.setImgB64(request.bodyDataMap.get("base64"));
+
         LOG.debug(blog.getHeader() + " created");
         blog.create();
         LOG.debug(request);
@@ -196,7 +201,9 @@ System.out.println(request.getBody());
                 html.append("<div>"+ b.getHeader()+"</div><br>");
                 html.append("<h3>Text:</h3><br>");
                 html.append("<div>"+ b.getText()+"</div><br>");
+                html.append("<img src=\"" + b.getImgB64() + "\">");
                 html.append("</div>");
+
             }
 
             html.append(StaticHandler.getHTMLfooter);

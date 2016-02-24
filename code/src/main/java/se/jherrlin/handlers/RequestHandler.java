@@ -16,7 +16,7 @@ public class RequestHandler {
 
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
 
-        String[] requestString = null;
+        String[] requestString;
         String headers = null;
         String body = null;
         Request requestObject = new Request();
@@ -33,7 +33,7 @@ public class RequestHandler {
             e.printStackTrace();
         }
 
-System.out.println(body);
+        System.out.println(body);
 
         // Try to split up and parse header
         if (headers != null){
@@ -52,7 +52,6 @@ System.out.println(body);
                 for (int i = 1; i < header.length; i++) {
                     requestObject.appendHeader(header[i]);
                 }
-                return requestObject;
             }
             catch (Exception e){
                 LOG.debug("Failed to parse header request.");
@@ -67,8 +66,7 @@ System.out.println(body);
             if (body.length() > 0 && body != null) {
 
                 requestObject.setBody(body);
-
-                String[] data = body.split("&");  // This is wrong if using text/plain in html form
+                String[] data = body.split("\r\n");  // This is wrong if using text/plain in html form
 
                 for (String s : data) {
 
@@ -82,8 +80,10 @@ System.out.println(body);
                     String[] datas = s.split("=");
 
                     requestObject.bodyDataMap.put(datas[0], datas[1]);
+
                 }
             }
+            return requestObject;
         }
         catch (Exception e){
             LOG.debug("Failed to parse request body:");

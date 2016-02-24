@@ -7,13 +7,34 @@
 <body>
 
 <form action="/post" method="POST" enctype="text/plain">
-    First name:<br>
-    <input type="text" name="firstname" value="Mickey"><br>
-    Last name:<br>
-    <input type="text" name="lastname" value="Mouse"><br><br>
-    <input type="file" name="pic" accept="image/*"><br>
+    Title:<br>
+    <input type="text" name="title" value="Mickey"><br>
+    Content:<br>
+    <input type="text" name="content" value="Mouse"><br><br>
+    <input type="file" name="fileChooser" id="fileChooser" accept="image/*" onchange="imgToBase64()"><br>
+    <input type="hidden" name="base64" id="base64">
     <input type="submit" value="Submit">
 </form>
 
 </body>
+
+<script type="text/javascript">
+    function imgToBase64() {
+        var fileSelected = document.getElementById("fileChooser").files;
+        var base64 = document.getElementById("base64");
+
+        if (fileSelected.length > 0) {
+            var fileToLoad = fileSelected[0];
+            var fileReader = new FileReader();
+
+            fileReader.onload = function(fileLoadedEvent)
+            {
+                base64.value = fileLoadedEvent.target.result;
+                console.log("Base64: " + base64.value);
+            };
+
+            fileReader.readAsDataURL(fileToLoad);
+        }
+    }
+</script>
 </html>
