@@ -135,8 +135,7 @@ public class Views {
                 html.append("<div class=\"row\" align=\"center\">");
                 html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"text/plain\" autocomplete=\"off\">");
                 html.append("<input type=\"hidden\" name=\"_method\" value=\"put\" />");
-                html.append("UUID: ! Dont change this !<br>");
-                html.append("<input type=\"text\" name=\"bloguuid\" value=\""+ b.getUuid()+"\" style=\"width: 100%\"><br>");
+                html.append("<input type=\"hidden\" name=\"bloguuid\" value=\""+ b.getUuid()+"\" style=\"width: 100%\"><br>");
                 html.append("Header:<br>");
                 html.append("<input type=\"text\" name=\"blogheader\" value=\""+ b.getHeader()+"\" style=\"width: 100%\"><br>");
                 html.append("Text:<br>");
@@ -209,7 +208,7 @@ public class Views {
                 html.append("<div>"+ b.getHeader()+"</div><br>");
                 html.append("<h3>Text:</h3><br>");
                 html.append("<div>"+ b.getText()+"</div><br>");
-                html.append("<img src=\"" + b.getImgB64() + "\">");
+                html.append("<img src=\"" + b.getImgB64() + "\" style=\"width: 100px;height: 100px\">");
                 html.append("</div>");
 
             }
