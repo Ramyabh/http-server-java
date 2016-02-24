@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import se.jherrlin.model.Request;
+import se.jherrlin.tcp.TCPServer;
 
 
 public class RequestHandler {
@@ -50,7 +51,8 @@ public class RequestHandler {
                 // Append headers to requestObject, skip first
                 // we already took care of that.
                 for (int i = 1; i < header.length; i++) {
-                    requestObject.appendHeader(header[i]);
+                    String[] headerData = header[i].split(":");
+                    requestObject.headerDataMap.put(headerData[0], headerData[1]);
                 }
             }
             catch (Exception e){

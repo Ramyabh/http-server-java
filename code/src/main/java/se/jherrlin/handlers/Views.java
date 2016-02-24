@@ -6,7 +6,9 @@ import se.jherrlin.domain.Blog;
 import se.jherrlin.model.Header;
 import se.jherrlin.model.Request;
 import se.jherrlin.model.Response;
+import se.jherrlin.tcp.TCPServer;
 
+import java.io.IOException;
 import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -50,6 +52,15 @@ public class Views {
         }
     }
 
+    public static void login(Request request) {
+        Response response = new Response();
+        response.setResponse(Header.response_200_ok);
+        response.appendHeader(Header.header_content_type_texthtml);
+        TCPServer.sessions.add(request.headerDataMap.get("Cookie"));
+
+        redirect(response, request, "/");
+    }
+
     public static void post(Request request) {
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
         Response response = new Response();
@@ -90,43 +101,23 @@ public class Views {
 
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
 
+        //System.out.println(request.getBody());
+        Response response = new Response();
+        System.out.println(request.bodyDataMap.get("bloguuid"));
+        System.out.println(request.bodyDataMap.get("blogheader"));
+        System.out.println(request.bodyDataMap.get("blogtext"));
         try {
-            //System.out.println(request.getBody());
-            Response response = new Response();
-            System.out.println(request.bodyDataMap.get("bloguuid"));
-            System.out.println(request.bodyDataMap.get("blogheader"));
-            System.out.println(request.bodyDataMap.get("blogtext"));
-            try{
-                Blog blog = Blog.getById(request.bodyDataMap.get("bloguuid"));
-                blog.setHeader(request.bodyDataMap.get("blogheader"));
-                blog.setText(request.bodyDataMap.get("blogtext"));
+            Blog blog = Blog.getById(request.bodyDataMap.get("bloguuid"));
+            blog.setHeader(request.bodyDataMap.get("blogheader"));
+            blog.setText(request.bodyDataMap.get("blogtext"));
 
-                blog.update();
-                LOG.debug(blog + " updated.");
-            }
-            catch (Exception e){LOG.debug(e);}
-
-            // http://stackoverflow.com/questions/5411538/redirect-from-an-html-page
-            String redirectUrlString = new String("<!DOCTYPE HTML> <html lang=\"en-US\"> <head> <meta charset=\"UTF-8\">\n" +
-                    "<meta http-equiv=\"refresh\" content=\"1;url=/blog\">" +
-                    "<script type=\"text/javascript\">" +
-                    "window.location.href = \"/blog\"" +
-                    "</script>" +
-                    "<title>Page Redirection</title>" +
-                    "</head> <body>" +
-                    "If you are not redirected automatically, follow the <a href='/blog'>Back to update blogs</a>" +
-                    "</body> </html>");
-
-            response.setResponse(Header.response_200_ok);
-            response.appendHeader(Header.header_content_type_texthtml);
-            request.getDataOutputStream().write(response.getHeaders());
-            request.getDataOutputStream().write(redirectUrlString.getBytes());
-            request.getDataOutputStream().close();
+            blog.update();
+            LOG.debug(blog + " updated.");
         } catch (Exception e) {
-            LOG.debug("Could not handle the put request to: "+request.getUri());
-            LOG.debug("\t"+e);
+            LOG.debug(e);
         }
 
+        redirect(response, request, "/blog");
     }
 
     public static void updateAllBlogPosts(Request request) {
@@ -184,6 +175,23 @@ public class Views {
         }
     }
 
+    public static void permissionDenied(Request request) {
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+        try {
+            Response response = new Response();
+            response.setResponse(Header.response_401_unauthorized);
+            response.setBody("401 Unauthorized".getBytes());
+
+            LOG.debug(request);
+            LOG.debug(response);
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(response.getBody());
+            request.getDataOutputStream().close();
+        } catch (IOException e) {
+            LOG.debug(e);
+        }
+    }
+
     public static void getAllBlogPosts(Request request) {
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
 
@@ -215,6 +223,30 @@ public class Views {
             request.getDataOutputStream().write(response.getBody());
             request.getDataOutputStream().close();
         } catch (Exception e) {
+            LOG.debug(e);
+        }
+    }
+
+    private static void redirect(Response response, Request request, String endpoint) {
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+        String redirectUrlString = "<!DOCTYPE HTML> <html lang=\"en-US\"> <head> <meta charset=\"UTF-8\">\n" +
+                "<meta http-equiv=\"refresh\" content=\"1;url=\"" + endpoint + "\">" +
+                "<script type=\"text/javascript\">" +
+                "window.location.href =\"" + endpoint + "\">" +
+                "</script>" +
+                "<title>Page Redirection</title>" +
+                "</head> <body>" +
+                "If you are not redirected automatically, follow the <a href='/blog'>Back to update blogs</a>" +
+                "</body> </html>";
+
+        response.setResponse(Header.response_200_ok);
+        response.appendHeader(Header.header_content_type_texthtml);
+
+        try {
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(redirectUrlString.getBytes());
+            request.getDataOutputStream().close();
+        } catch (IOException e) {
             LOG.debug(e);
         }
     }

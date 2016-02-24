@@ -1,6 +1,7 @@
 package se.jherrlin.handlers;
 
 import se.jherrlin.model.Request;
+import se.jherrlin.tcp.TCPServer;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,12 +29,22 @@ public class Urls {
             Views.staticfiles(request);
         }
 
+        else if (Pattern.matches("^/login(.+?|$)$", request.getUri())) {
+            Views.login(request);
+        }
+
         else if (Pattern.matches("^/post(.+?|$)$", request.getUri())) {
-            Views.post(request);
+            if (TCPServer.sessions.contains(request.headerDataMap.get("Cookie")))
+                Views.post(request);
+
+            Views.permissionDenied(request);
         }
 
         else if (Pattern.matches("^/put(.+?|$)$", request.getUri())) {
-            Views.put(request);
+            if (TCPServer.sessions.contains(request.headerDataMap.get("Cookie")))
+                Views.put(request);
+
+            Views.permissionDenied(request);
         }
 
 
@@ -52,7 +63,4 @@ public class Urls {
         // If we cant match url
         else {Views.notfound(request);}
     }
-
-
-
 }

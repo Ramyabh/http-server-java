@@ -14,7 +14,12 @@ public class Request {
     private ArrayList<String> headers = new ArrayList<String>();
     private int clientPort;
     private DataOutputStream dataOutputStream;
+
+    public final String USERNAME = "admin";
+    public final String PASSWORD = "admin";
+
     public HashMap<String, String> bodyDataMap = new HashMap<String, String>();
+    public HashMap<String, String> headerDataMap = new HashMap<String, String>();
 
     public Request() {
     }
