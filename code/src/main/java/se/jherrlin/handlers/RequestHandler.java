@@ -81,7 +81,10 @@ public class RequestHandler {
                     // Split up the request body and place KEY, VALUE in a hashmap
                     String[] datas = s.split("=");
 
-                    requestObject.bodyDataMap.put(datas[0], datas[1]);
+                    // If we only got a key and no value, dont put in dataMap
+                    if (datas.length > 1){
+                        requestObject.bodyDataMap.put(datas[0], datas[1]);
+                    }
 
                 }
             }
@@ -93,6 +96,7 @@ public class RequestHandler {
             LOG.debug("\t"+e);
         }
 
+        // We could not handle the request
         return new Request(Request.HTTPMethod.NOTVALID, "Bad", "Bad");
     }
 

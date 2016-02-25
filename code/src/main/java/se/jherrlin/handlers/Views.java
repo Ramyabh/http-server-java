@@ -74,13 +74,26 @@ public class Views {
 
         Blog blog = new Blog();
         blog.setUuid(UUID.randomUUID().toString());
-        blog.setHeader(request.bodyDataMap.get("title"));
-        blog.setText(request.bodyDataMap.get("content"));
-        blog.setImgName(request.bodyDataMap.get("fileChooser"));
-        blog.setImgB64(request.bodyDataMap.get("base64"));
+        String title = request.bodyDataMap.get("title");
+        String text = request.bodyDataMap.get("content");
+        String imgNage = request.bodyDataMap.get("fileChooser");
+        String base64Img = request.bodyDataMap.get("base64");
 
-        LOG.debug(blog.getHeader() + " created");
+        if (title != null){
+            blog.setHeader(title);
+        }
+        if (text != null){
+            blog.setText(text);
+        }
+        if (imgNage != null){
+            blog.setImgName(imgNage);
+        }
+        if (base64Img != null){
+            blog.setImgB64(base64Img);
+        }
+
         blog.create();
+        LOG.debug(blog.getHeader() + " created");
         LOG.debug(request);
         LOG.debug(response);
 
@@ -103,14 +116,25 @@ public class Views {
 
         //System.out.println(request.getBody());
         Response response = new Response();
-        System.out.println(request.bodyDataMap.get("bloguuid"));
-        System.out.println(request.bodyDataMap.get("blogheader"));
-        System.out.println(request.bodyDataMap.get("blogtext"));
+        String uuid = request.bodyDataMap.get("uuid");
+        String title = request.bodyDataMap.get("title");
+        String content = request.bodyDataMap.get("content");
+        String fileChooses = request.bodyDataMap.get("fileChooser");
+        String base64Img = request.bodyDataMap.get("base64");
         try {
-            Blog blog = Blog.getById(request.bodyDataMap.get("bloguuid"));
-            blog.setHeader(request.bodyDataMap.get("blogheader"));
-            blog.setText(request.bodyDataMap.get("blogtext"));
-
+            Blog blog = Blog.getById(uuid);
+            if (title != null){
+                blog.setHeader(title);
+            }
+            if (content != null){
+                blog.setText(content);
+            }
+            if (fileChooses != null){
+                blog.setImgName(fileChooses);
+            }
+            if (fileChooses != null){
+                blog.setImgB64(base64Img);
+            }
             blog.update();
             LOG.debug(blog + " updated.");
         } catch (Exception e) {
@@ -133,16 +157,37 @@ public class Views {
             for (Blog b : Blog.getAll()){
                 html.append("<hr>");
                 html.append("<div class=\"row\" align=\"center\">");
-                html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"text/plain\" autocomplete=\"off\">");
-                html.append("<input type=\"hidden\" name=\"_method\" value=\"put\" />");
-                html.append("<input type=\"hidden\" name=\"bloguuid\" value=\""+ b.getUuid()+"\" style=\"width: 100%\"><br>");
-                html.append("Header:<br>");
-                html.append("<input type=\"text\" name=\"blogheader\" value=\""+ b.getHeader()+"\" style=\"width: 100%\"><br>");
-                html.append("Text:<br>");
-                html.append("<input type=\"text\" name=\"blogtext\" value=\""+ b.getText()+"\" style=\"width: 100%\"><br>");
-                html.append("<input type=\"submit\" value=\"Update\">");
-                html.append("</form>");
+                html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"text/plain\" autocomplete=\"off\">" +
+                        "<input type=\"hidden\" name=\"_method\" value=\"put\" />"+
+                        "<input type=\"hidden\" name=\"uuid\" value=\"" + b.getUuid() + "\"><br>"+
+                        "    Title:<br>\n" +
+                        "    <input type=\"text\" name=\"title\" value=\"" + b.getHeader() + "\"><br>\n" +
+                        "    Content:<br>\n" +
+                        "    <input type=\"text\" name=\"content\" value=\""+ b.getText() +"\"><br><br>\n" +
+                        "    <input type=\"file\" name=\"fileChooser\" id=\"fileChooser\" accept=\"image/*\" onchange=\"imgToBase64()\"><br>\n" +
+                        "    <input type=\"hidden\" name=\"base64\" id=\"base64\">\n" +
+                        "    <input type=\"submit\" value=\"Submit\">\n" +
+                        "</form>");
+                if (b.getImgB64() != null){
+                    html.append("<img src=\"" + b.getImgB64() + "\" style=\"width: 100px;height: 100px\">");
+                }
                 html.append("</div>");
+                html.append("<script type=\"text/javascript\">\n" +
+                        "    function imgToBase64() {\n" +
+                        "        var fileSelected = document.getElementById(\"fileChooser\").files;\n" +
+                        "        var base64 = document.getElementById(\"base64\");\n" +
+                        "        if (fileSelected.length > 0) {\n" +
+                        "            var fileToLoad = fileSelected[0];\n" +
+                        "            var fileReader = new FileReader();\n" +
+                        "            fileReader.onload = function(fileLoadedEvent)\n" +
+                        "            {\n" +
+                        "                base64.value = fileLoadedEvent.target.result;\n" +
+                        "                console.log(\"Base64: \" + base64.value);\n" +
+                        "            };\n" +
+                        "            fileReader.readAsDataURL(fileToLoad);\n" +
+                        "        }\n" +
+                        "    }\n" +
+                        "</script>");
             }
 
             html.append(StaticHandler.getHTMLfooter);
@@ -208,7 +253,9 @@ public class Views {
                 html.append("<div>"+ b.getHeader()+"</div><br>");
                 html.append("<h3>Text:</h3><br>");
                 html.append("<div>"+ b.getText()+"</div><br>");
-                html.append("<img src=\"" + b.getImgB64() + "\" style=\"width: 100px;height: 100px\">");
+                if (b.getImgB64() != null){
+                    html.append("<img src=\"" + b.getImgB64() + "\" style=\"width: 100px;height: 100px\">");
+                }
                 html.append("</div>");
 
             }

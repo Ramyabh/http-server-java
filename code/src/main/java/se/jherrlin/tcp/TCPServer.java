@@ -84,7 +84,19 @@ class ServerThread extends Thread {
             request.setClientPort(this.socket.getPort());
             request.setDataOutputStream(outputStream);
 
-            Urls.urls(request);
+            // If we cant handle the request
+            // Send server error
+            if (request.getMethod() == Request.HTTPMethod.NOTVALID){
+                Response serverErrorResponse = new Response();
+                serverErrorResponse.setResponse(Header.response_500_servererror);
+                serverErrorResponse.setBody("Server Error".getBytes());
+                request.getDataOutputStream().write(serverErrorResponse.getHeaders());
+                request.getDataOutputStream().write(serverErrorResponse.getBody());
+                request.getDataOutputStream().close();
+            }
+            else {
+                Urls.urls(request);
+            }
         }
         catch (Exception e){
             LOG.debug("Failed in main server thread run.");

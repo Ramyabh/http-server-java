@@ -5,6 +5,11 @@ public class Header {
 
     public static String response_200_ok = "HTTP/1.1 200 OK";
     public static String response_201_created = "HTTP/1.1 201 Created";
+    public static String response_202_accepted = "HTTP/1.1 202 Accepted";
+    public static String response_203_nonauthoritativeinformation = "HTTP/1.1 203 Non-Authoritative Information";
+    public static String response_204_nocontent = "HTTP/1.1 204 No Content";
+    public static String response_205_resetcontent = "HTTP/1.1 205 Reset Content";
+    public static String response_206_partialcontent = "HTTP/1.1 206 Partial Content";
     public static String response_400_badrequest = "HTTP/1.1 400 Bad Request";
     public static String response_401_unauthorized = "HTTP/1.1 401 Unauthorized";
     public static String response_402_paymentrequired = "HTTP/1.1 402 Payment Required";
