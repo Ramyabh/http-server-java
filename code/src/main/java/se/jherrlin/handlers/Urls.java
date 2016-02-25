@@ -47,11 +47,6 @@ public class Urls {
             Views.permissionDenied(request);
         }
 
-
-        else if (Pattern.matches("^/postPicture(.+?|$)$", request.getUri())) {
-            Views.postPicture(request);
-        }
-
         else if (Pattern.matches("^/blog$", request.getUri())) {
             Views.getAllBlogPosts(request);
         }

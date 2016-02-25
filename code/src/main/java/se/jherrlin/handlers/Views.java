@@ -54,10 +54,9 @@ public class Views {
 
     public static void login(Request request) {
         Response response = new Response();
-        response.setResponse(Header.response_200_ok);
+        response.setResponse(Header.response_202_accepted);
         response.appendHeader(Header.header_content_type_texthtml);
         TCPServer.sessions.add(request.headerDataMap.get("Cookie"));
-
         redirect(response, request, "/");
     }
 
@@ -98,16 +97,13 @@ public class Views {
         LOG.debug(response);
 
         try {
-            request.getDataOutputStream().write(response.getHeaders());
-            request.getDataOutputStream().write(response.getBody());
-            request.getDataOutputStream().close();
+            redirect(response, request, "/blog");
+//            request.getDataOutputStream().write(response.getHeaders());
+//            request.getDataOutputStream().write(response.getBody());
+//            request.getDataOutputStream().close();
         } catch (Exception e) {
             LOG.debug(e);
         }
-    }
-
-    public static void postPicture(Request request) {
-        System.out.println("-!- Not implemented -!-");
     }
 
     public static void put(Request request) {
@@ -223,8 +219,8 @@ public class Views {
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
         try {
             Response response = new Response();
-            response.setResponse(Header.response_401_unauthorized);
-            response.setBody("401 Unauthorized".getBytes());
+            response.setResponse(Header.response_403_forbidden);
+            response.setBody("403 Forbidden".getBytes());
 
             LOG.debug(request);
             LOG.debug(response);
@@ -275,15 +271,22 @@ public class Views {
 
     private static void redirect(Response response, Request request, String endpoint) {
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
-        String redirectUrlString = "<!DOCTYPE HTML> <html lang=\"en-US\"> <head> <meta charset=\"UTF-8\">\n" +
-                "<meta http-equiv=\"refresh\" content=\"1;url=\"" + endpoint + "\">" +
-                "<script type=\"text/javascript\">" +
-                "window.location.href =\"" + endpoint + "\">" +
-                "</script>" +
-                "<title>Page Redirection</title>" +
-                "</head> <body>" +
-                "If you are not redirected automatically, follow the <a href='/blog'>Back to update blogs</a>" +
-                "</body> </html>";
+        String redirectUrlString = "" +
+                "<!DOCTYPE HTML>\n" +
+                "<html lang=\"en-US\">\n" +
+                "    <head>\n" +
+                "        <meta charset=\"UTF-8\">\n" +
+                "        <meta http-equiv=\"refresh\" content=\"1;url="+endpoint+"\">\n" +
+                "        <script type=\"text/javascript\">\n" +
+                "            window.location.href = \"" + endpoint + "\"" +
+                "        </script>\n" +
+                "        <title>Page Redirection</title>\n" +
+                "    </head>\n" +
+                "    <body>\n" +
+                "        If you are not redirected automatically, follow the <a href='"+endpoint+"'>link</a>\n" +
+                "    </body>\n" +
+                "</html>";
+
 
         response.setResponse(Header.response_200_ok);
         response.appendHeader(Header.header_content_type_texthtml);
