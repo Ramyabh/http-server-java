@@ -134,238 +134,30 @@
 % This is where you write the report:
 \section{Introduction}
 
-All virtual machines are running in Docker containers, Dockers internal network is 172.17.0.0.
-Base host is addressed with 172.17.0.1.
-The container used is the official Java, and the specific version is OpenJDK / OpenJRE 8.
+Code in module db and domain is not code that is accured in the assignment.
+We created a small ORM becase the nature of POST and PUT requests.
 
+Urls
 
+In module handlers, we have a class called Urls.
+If we can parse the request we put the request in Urls and we try to match the urls to different regexps.
+If match we send the request to a View class that takes care of business logic.
 
-\section{Assignment 1.1}
-This assignment is based of setting up a virtual environment and send icmp (ping) packages.
-\\
-\\
-Two Docker containers is set up, 172.17.0.2 and 172.17.0.3.
-172.17.0.2 sends 5 icmp requests to 172.17.0.3 and gets 5 icmp replays back from target.
+The application starts in modue tcp, class TCPserver -> ServerThread.
 
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.5]{img/assignment11.png}
-	\label{fig:assignment11}
-	\caption{ping -c 5}
-\end{figure}
+\section{Problem 2}
 
+200 OK
+201 Created, When success with POST on /post
+202 Accepted, When /login success
+205 Reset Content, When /logout success
+400 Bad Request, When NOT PUT on /put
+403 Forbidden, When trying trying /post or /put but have not logged in (/login) before
+404 Not Found, When trying to access a static file but cant find it OR if url doesn match any
+405 Method Not Allowed, When NOT POST on /post
+500 Server Error, If we cant parse the request
 
 
-\section{Assignment 1.2}
-
-To handle commandline arguments i used Apache Commons CLI lib.
-This provides some good features for handeling cli inputs.
-I had to write some exception handling when types didnt match.
-All of this is done in the abstract class Host and is then applied to all
-of the hosts by inheritence, see ~\ref{sec:task2}.
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.35]{img/assignment12.png}
-	\label{fig:assignment12}
-	\caption{Send 5 UDP package in 1 sec}
-\end{figure}
-
-\subsection{Exceptions}
-
-This is the exceptions that are handled in the commandline input workflow.
-
-\begin{description}
-  \item[NumberFormatException] \hfill \\
-    When we want a number but gets something else
-  \item[NullPointerException] \hfill \\
-    When flag is given but no argument
-  \item[UnrecognizedOptionException] \hfill \\
-    When option is not known
-  \item[MissingArgumentException] \hfill \\
-    When flag is given but no argument
-  \item[IP address] \hfill \\
-    Make sure the IP address is valid
-  \item[Port number] \hfill \\
-    Make sure the port number is in the range
-  \item[Message Transfer Rate] \hfill \\
-    Not negative
-  \item[Seconds ] \hfill \\
-    Not below 0
-
-\end{description}
-
-
-\subsection{VG-tasks}
-
-Clairification on vg-tasks.
-
-\subsubsection{Task 1}
-
-Not implemented
-
-\subsubsection{Task 2}
-\label{sec:task2}
-In the implementation there is a abstract class called Host.
-All of the hosts (UDPServer, UDPClient, TCPServer, TCPClient) extends Host.
-Host gives functionallity to validate that all input parameters are correct.
-It also provides a run method. All hosts override the run method to implement 
-the specific logic for the specific host.
-
-\clearpage
-
-\section{Assignment 1.3}
-\label{sec:assignment13}
-In ~\ref{fig:assignment13} there is a screenshot of 4 clients creating TCP connections to 
-the server.
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.7]{img/assignment13.png}
-	\label{fig:assignment13}
-	\caption{TCP server with threads, multi client connection}
-\end{figure}
-
-\clearpage
-
-\subsection{TCP server with small bufsize}
-
-In ~\ref{fig:assignment13tcp} there is a screenshot of an TCP server with a buffer size of 5.
-The client is sending a message with a size of 10. The server is handling this in a good way and assembles the stream.
-Returning a message that is the size of 10.
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.33]{img/assignment13tcp.png}
-	\label{fig:assignment13tcp}
-	\caption{TCP where bufsize is smaller than message length}
-\end{figure}
-
-\subsection{UDP server with small bufsize}
-
-In ~\ref{fig:assignment13udp} there is a screenshot of an UDP server with a buffer size of 5.
-The client is sendning a message with a size of 10.
-The UDP is not handeling this good, it cuts the message and sends back half the message to the client.
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.33]{img/assignment13udp.png}
-	\label{fig:assignment13udp}
-	\caption{UDP where bufsize is smaller than message length}
-\end{figure}
-
-
-\subsection{Conclusion}
-
-The reason that TCP server is handeling this in a good way it that is uses a stream.
-It can be refered to open a file and read or write a steam. 
-In UDP we just get a package and nothing more, if we dont take care of the package 
-UDP wont help us doing it.
-
-
-\clearpage
-
-\section{Assignment 1.4, Wireshark}
-
-\subsection{UDP}
-UDP client / server in Wireshark
-\subsubsection{To small buffersize}
-In ~\ref{fig:assignment14udpSmallBuf} we see that the length is bigger on
-the way to the server than on the way back to the client
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.43]{img/assignment14udpSmallBuf.png}
-	\label{fig:assignment14udpSmallBuf}
-	\caption{UDP server with small buffer size}
-\end{figure}
-
-
-\subsubsection{Enought buffersize}
-In ~\ref{fig:assignment14udpOKBuf} we see that the length is the same on both ways
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.43]{img/assignment14udpOKBuf.png}
-	\label{fig:assignment14udpOKBuf}
-	\caption{UDP server with enought buffer size}
-\end{figure}
-
-
-\clearpage
-
-\subsection{TCP}
-TCP client / server in Wireshark
-\subsubsection{To small buffersize}
-In ~\ref{fig:assignment14tcpSmallBuf} we see that there is alot of packages going back
-forth.
-TCP have the Three way handshake or Syn-Ack when esatblishing and finishing a connection stream. For every package that is send, the reciever returns an Ack to the sender that tells the sender that the reciever have got the package and the data inside is correct.
-If we compair the number of packages in ~\ref{fig:assignment14tcpSmallBuf} and ~\ref{fig:assignment14tcpOKBuf} we see that ~\ref{fig:assignment14tcpOKBuf} have less packages. The reason for this is that the buffer size is big enought to handle the data in fewer packets.
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.34]{img/assignment14tcpSmallBuf.png}
-	\label{fig:assignment14tcpSmallBuf}
-	\caption{TCP server with small buffer size}
-\end{figure}
-
-\subsubsection{Enought buffersize}
-
-
-\begin{figure}[H]
-    \centering  
-    \includegraphics[scale=0.35]{img/assignment14tcpOKBuf.png}
-	\label{fig:assignment14tcpOKBuf}
-	\caption{TCP server with enought buffer size}
-\end{figure}
-
-
-\clearpage
-
-\section{Instructions}
-
-Install, compile and run instructions.
-
-\subsection{Install dependencies}
-
-This is a Maven project.
-Install Maven3 and OpenJDK on a Debian based system.
-
-\begin{lstlisting}[language=bash]
-apt-get install openjdk-7-jdk
-apt-get install maven
-\end{lstlisting}
-
-\subsection{Compile and run}
-
-\subsubsection{Compile}
-\label{sec:compile}
-
-Navigate to project root, where the file pom.xml is located.
-Package the project with:
-
-\begin{lstlisting}[language=bash]
-mvn package -e -DskipTests
-\end{lstlisting}
-
-\subsubsection{Execute}
-
-Execute the code:
-
-\begin{lstlisting}[language=bash]
-java -jar target/networking-1.0-SNAPSHOT.one-jar.jar
-\end{lstlisting}
-
-
-\subsubsection{Docker, Optional}
-
-The code needs to be compiled with Maven before running in Docker, see ~\ref{sec:compile}.
-
-\begin{lstlisting}[language=bash]
-apt-get install docker
-docker run -i -t --rm -v $PWD:/code java:8 /bin/bash
-java -jar code/networking-1.0-SNAPSHOT.one-jar.jar
-\end{lstlisting}
 
 
 %------------------------------------------------------------------------------
