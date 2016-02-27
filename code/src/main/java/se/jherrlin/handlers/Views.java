@@ -60,49 +60,79 @@ public class Views {
         redirect(response, request, "/");
     }
 
-    public static void post(Request request) {
-        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+    public static void logout(Request request) {
         Response response = new Response();
-        response.setResponse(Header.response_201_created);
-        response.appendHeader(Header.header_content_type_texthtml);
-
-        response.setBody(request.getBody().getBytes());
-        System.out.println("REQUEST BODY: " + request.getBody());
-
-        Db.initDb();
-
-        Blog blog = new Blog();
-        blog.setUuid(UUID.randomUUID().toString());
-        String title = request.bodyDataMap.get("title");
-        String text = request.bodyDataMap.get("content");
-        String imgNage = request.bodyDataMap.get("fileChooser");
-        String base64Img = request.bodyDataMap.get("base64");
-
-        if (title != null){
-            blog.setHeader(title);
+        TCPServer.sessions.clear(); // Remove cookie == logout
+        response.setResponse(Header.response_205_resetcontent);
+        response.setBody("205 Reset Content".getBytes());
+        try{
+            request.getDataOutputStream().write(response.getHeaders());
+            request.getDataOutputStream().write(response.getBody());
+            request.getDataOutputStream().close();
         }
-        if (text != null){
-            blog.setText(text);
-        }
-        if (imgNage != null){
-            blog.setImgName(imgNage);
-        }
-        if (base64Img != null){
-            blog.setImgB64(base64Img);
-        }
+        catch (Exception e){}
+    }
 
-        blog.create();
-        LOG.debug(blog.getHeader() + " created");
-        LOG.debug(request);
-        LOG.debug(response);
+    public static void post(Request request) {
 
-        try {
-            redirect(response, request, "/blog");
-//            request.getDataOutputStream().write(response.getHeaders());
-//            request.getDataOutputStream().write(response.getBody());
-//            request.getDataOutputStream().close();
-        } catch (Exception e) {
-            LOG.debug(e);
+        final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+
+        Response response = new Response();
+
+        if (request.getMethod() == Request.HTTPMethod.POST) {
+
+            response.setResponse(Header.response_201_created);
+            response.appendHeader(Header.header_content_type_texthtml);
+
+            response.setBody(request.getBody().getBytes());
+            System.out.println("REQUEST BODY: " + request.getBody());
+
+            Db.initDb();
+
+            Blog blog = new Blog();
+            blog.setUuid(UUID.randomUUID().toString());
+            String title = request.bodyDataMap.get("title");
+            String text = request.bodyDataMap.get("content");
+            String imgNage = request.bodyDataMap.get("fileChooser");
+            String base64Img = request.bodyDataMap.get("base64");
+
+            if (title != null) {
+                blog.setHeader(title);
+            }
+            if (text != null) {
+                blog.setText(text);
+            }
+            if (imgNage != null) {
+                blog.setImgName(imgNage);
+            }
+            if (base64Img != null) {
+                blog.setImgB64(base64Img);
+            }
+
+            blog.create();
+            LOG.debug(blog.getHeader() + " created");
+            LOG.debug(request);
+            LOG.debug(response);
+
+            try {
+                redirect(response, request, "/blog");
+            } catch (Exception e) {
+                LOG.debug(e);
+            }
+        }
+        else {
+            try {
+
+                response.setResponse(Header.response_405_methodnotallowed);
+                response.setBody("405 Method Not Allowed".getBytes());
+                request.getDataOutputStream().write(response.getHeaders());
+                request.getDataOutputStream().write(response.getBody());
+                request.getDataOutputStream().close();
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -110,34 +140,48 @@ public class Views {
 
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
 
-        //System.out.println(request.getBody());
         Response response = new Response();
-        String uuid = request.bodyDataMap.get("uuid");
-        String title = request.bodyDataMap.get("title");
-        String content = request.bodyDataMap.get("content");
-        String fileChooses = request.bodyDataMap.get("fileChooser");
-        String base64Img = request.bodyDataMap.get("base64");
-        try {
-            Blog blog = Blog.getById(uuid);
-            if (title != null){
-                blog.setHeader(title);
-            }
-            if (content != null){
-                blog.setText(content);
-            }
-            if (fileChooses != null){
-                blog.setImgName(fileChooses);
-            }
-            if (fileChooses != null){
-                blog.setImgB64(base64Img);
-            }
-            blog.update();
-            LOG.debug(blog + " updated.");
-        } catch (Exception e) {
-            LOG.debug(e);
-        }
 
-        redirect(response, request, "/blog");
+        if (request.getMethod() == Request.HTTPMethod.PUT){
+
+            String uuid = request.bodyDataMap.get("uuid");
+            String title = request.bodyDataMap.get("title");
+            String content = request.bodyDataMap.get("content");
+            String fileChooses = request.bodyDataMap.get("fileChooser");
+            String base64Img = request.bodyDataMap.get("base64");
+            try {
+                Blog blog = Blog.getById(uuid);
+                if (title != null){
+                    blog.setHeader(title);
+                }
+                if (content != null){
+                    blog.setText(content);
+                }
+                if (fileChooses != null){
+                    blog.setImgName(fileChooses);
+                }
+                if (fileChooses != null){
+                    blog.setImgB64(base64Img);
+                }
+                blog.update();
+                LOG.debug(blog + " updated.");
+            } catch (Exception e) {
+                LOG.debug(e);
+            }
+
+            redirect(response, request, "/blog");
+        }
+        else {
+            try {
+                response.setResponse(Header.response_400_badrequest);
+                response.setBody("400 Bad Request, needs a PUT request".getBytes());
+                request.getDataOutputStream().write(response.getHeaders());
+                request.getDataOutputStream().write(response.getBody());
+                request.getDataOutputStream().close();
+
+            }
+            catch (Exception e){}
+        }
     }
 
     public static void updateAllBlogPosts(Request request) {
@@ -153,7 +197,7 @@ public class Views {
             for (Blog b : Blog.getAll()){
                 html.append("<hr>");
                 html.append("<div class=\"row\" align=\"center\">");
-                html.append("<form action=\"/put\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"text/plain\" autocomplete=\"off\">" +
+                html.append("<form action=\"/put/"+b.getUuid()+"\" method=\"post\" accept-charset=\"UTF-8\" enctype=\"text/plain\" autocomplete=\"off\">" +
                         "<input type=\"hidden\" name=\"_method\" value=\"put\" />"+
                         "<input type=\"hidden\" name=\"uuid\" value=\"" + b.getUuid() + "\"><br>"+
                         "    Title:<br>\n" +
@@ -188,7 +232,7 @@ public class Views {
 
             html.append(StaticHandler.getHTMLfooter);
             Response response = new Response();
-            response.setResponse(Header.response_201_created);
+            response.setResponse(Header.response_200_ok);
             response.appendHeader(Header.header_content_type_texthtml);
             response.setBody(html.toString().getBytes());
             request.getDataOutputStream().write(response.getHeaders());
@@ -299,4 +343,5 @@ public class Views {
             LOG.debug(e);
         }
     }
+
 }

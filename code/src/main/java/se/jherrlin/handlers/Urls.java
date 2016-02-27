@@ -33,6 +33,10 @@ public class Urls {
             Views.login(request);
         }
 
+        else if (Pattern.matches("^/logout(.+?|$)$", request.getUri())) {
+            Views.logout(request);
+        }
+
         else if (Pattern.matches("^/post(.+?|$)$", request.getUri())) {
             if (TCPServer.sessions.contains(request.headerDataMap.get("Cookie")))
                 Views.post(request);

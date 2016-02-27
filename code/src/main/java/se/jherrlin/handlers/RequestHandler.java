@@ -24,17 +24,23 @@ public class RequestHandler {
 
         // Try to split header and body
         try{
-            requestString = requestStringIn.split("\r\n\r\n");
-            headers = requestString[0];
-            body = requestString[1].trim();
+            if (requestStringIn.contains("\r\n\r\n")){  // If we see the pattern that separates the header and the body
+                requestString = requestStringIn.split("\r\n\r\n");  // Split at the separation pattern
+                headers = requestString[0];
+                if (requestString.length > 1){  // If we get data in the body.
+                    body = requestString[1].trim();  // Trim the request and set it to bdy.
+                }
+            }
+            else{
+                headers = requestStringIn.trim();  // If we only get headers.
+            }
+
         }
         catch (IndexOutOfBoundsException e){
             LOG.debug("Failed to split header and body in request.");
             LOG.debug(requestStringIn);
             e.printStackTrace();
         }
-
-        System.out.println(body);
 
         // Try to split up and parse header
         if (headers != null){
@@ -50,10 +56,13 @@ public class RequestHandler {
 
                 // Append headers to requestObject, skip first
                 // we already took care of that.
-                for (int i = 1; i < header.length; i++) {
-                    String[] headerData = header[i].split(":");
-                    requestObject.headerDataMap.put(headerData[0], headerData[1]);
+                if (header.length > 1){
+                    for (int i = 1; i < header.length; i++) {
+                        String[] headerData = header[i].split(":");
+                        requestObject.headerDataMap.put(headerData[0], headerData[1]);
+                    }
                 }
+
             }
             catch (Exception e){
                 LOG.debug("Failed to parse header request.");
@@ -64,9 +73,7 @@ public class RequestHandler {
 
         // try to parse body
         try{
-            // THIS NEEDS TO BE UPDATED TO PARSE CORRECTLY
-            if (body.length() > 0 && body != null) {
-
+            if (body != null) {
                 requestObject.setBody(body);
                 String[] data = body.split("\r\n");  // This is wrong if using text/plain in html form
 
@@ -85,16 +92,19 @@ public class RequestHandler {
                     if (datas.length > 1){
                         requestObject.bodyDataMap.put(datas[0], datas[1]);
                     }
-
                 }
             }
             return requestObject;
         }
+
         catch (Exception e){
             LOG.debug("Failed to parse request body:");
             LOG.debug("\t"+body);
             LOG.debug("\t"+e);
         }
+
+
+
 
         // We could not handle the request
         return new Request(Request.HTTPMethod.NOTVALID, "Bad", "Bad");

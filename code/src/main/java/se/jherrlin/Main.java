@@ -4,15 +4,12 @@ import org.apache.commons.cli.*;
 import se.jherrlin.model.Host;
 import se.jherrlin.tcp.TCPClient;
 import se.jherrlin.tcp.TCPServer;
-import se.jherrlin.udp.UDPClient;
-import se.jherrlin.udp.UDPServer;
+
 
 import java.io.IOException;
 
 public class Main
 {
-    public static UDPServer udpserver;
-    public static UDPClient udpclient;
     public static TCPServer tcpserver;
     public static TCPClient tcpclient;
 
@@ -22,7 +19,7 @@ public class Main
 
         // commandline arguments
         options.addOption("h", "help", false, "show help.");
-        options.addOption("m", "mode", true, "{ udpserver | udpclient | tcpserver | tcpclient }");
+        options.addOption("m", "mode", true, "{ tcpserver | tcpclient }");
         options.addOption("p", "port", true, "port number. default: 4950");
         options.addOption("b", "buffer-size", true, "buffer size. default: 1024");
         options.addOption("i", "ip-address", true, "ip address. default: 127.0.0.1");
@@ -50,15 +47,7 @@ public class Main
 
                 Host host = null;
 
-                if (cmd.getOptionValue("m").equals("udpserver")){
-                    host = new UDPServer(cmd);
-                }
-
-                else if (cmd.getOptionValue("m").equals("udpclient")){
-                    host = new UDPClient(cmd);
-                }
-
-                else if (cmd.getOptionValue("m").equals("tcpserver")){
+                if (cmd.getOptionValue("m").equals("tcpserver")){
                     host = new TCPServer(cmd);
                 }
 
