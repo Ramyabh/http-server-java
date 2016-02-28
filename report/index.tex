@@ -79,7 +79,7 @@
 \begin{sidebar}
     \vspace{10cm}
     \normalfont \normalsize
-    \Huge Assignment 1\\ % Dokumentets typ, t.ex. Examensarbete
+    \Huge Assignment 2\\ % Dokumentets typ, t.ex. Examensarbete
     \vspace{-1.3cm}
 \end{sidebar}
 \vspace{3cm}
@@ -89,12 +89,14 @@
 \end{flushleft}
 \null
 \vfill
-\begin{textblock}{6}(10,13)
+\begin{textblock}{6}(9,11)
 \begin{flushright}
 \begin{minipage}{\textwidth}
 \begin{flushleft} \large
 \emph{Author:} John Herrlin\\ % Författare
 \emph{Email: } jh222jx@student.lnu.se\\
+\emph{Author:} Rasmus Sjostrom\\ % Författare
+\emph{Email: } rs222kp@student.lnu.se\\
 %\emph{Handledare:} Dr.~Foo \textsc{Bar}\\ % Handledare
 %\emph{Examinator:} Dr.~Mark \textsc{Brown}\\ % Examinator
 \emph{Semester:} VT2016\\ % Termin
@@ -147,15 +149,63 @@ The application starts in modue tcp, class TCPserver -> ServerThread.
 
 \section{Problem 2}
 
-200 OK
-201 Created, When success with POST on /post
-202 Accepted, When /login success
-205 Reset Content, When /logout success
-400 Bad Request, When NOT PUT on /put
-403 Forbidden, When trying trying /post or /put but have not logged in (/login) before
-404 Not Found, When trying to access a static file but cant find it OR if url doesn match any
-405 Method Not Allowed, When NOT POST on /post
-500 Server Error, If we cant parse the request
+The table in ~\ref{fig:responsecodesandusage} describes different types of response codes that the server sends back to the client.
+We table describes response codes that are both in the G task in Problem 1 and VG-task 1 in Problem 2.
+The reason to have everything in one table and not to split them up if for the simplicity and readability.
+
+\begin{figure}[H]
+  \centering  
+  \begin{tabular}{ | l | l | }
+    \hline			
+    Code & Usage \\
+    \hline			
+    200 & OK, Many places where server handles response in a correct way. \\
+    \hline			
+    201 & Created, When success with POST on /post \\
+    \hline			
+    202 & Accepted, When /login success \\
+    \hline			
+    205 & Reset Content, When /logout success. Figure~\ref{fig:response205logout} \\
+    \hline			
+    400 & Bad Request, When NOT PUT on /put . Figure~\ref{fig:response400put} \\
+    \hline			
+    403 & Forbidden, When trying trying /post or /put but have not logged in (/login) before \\
+    \hline			
+    404 & Not Found, When trying to access a static file but cant find it OR if url doesn match any \\
+    \hline			
+    405 & Method Not Allowed, When NOT POST on /post \\
+    \hline			
+    500 & Server Error, If we cant parse the request \\
+    \hline  
+  \end{tabular}
+  \label{fig:responsecodesandusage}
+  \caption{Response codes and their usage.}
+\end{figure}
+
+\section{Screenshots}
+
+hey 
+
+\begin{figure}[H]
+    \centering  
+    \includegraphics[scale=1]{img/screenshots/response205logout.png}
+	\label{fig:response205logout}
+	\caption{Method: GET, Endpoint: /logout, Response: 205 Reset Content}
+\end{figure}
+
+\begin{figure}[H]
+    \centering  
+    \includegraphics[scale=0.6]{img/screenshots/response200login.png}
+	\label{fig:response200login}
+	\caption{Method: GET, Endpoint: /login, Response: 200 OK}
+\end{figure}
+
+\begin{figure}[H]
+    \centering  
+    \includegraphics[scale=0.6]{img/screenshots/response400put.png}
+	\label{fig:response400put}
+	\caption{Method: GET, Endpoint: /put, Response: 400 Bad Request}
+\end{figure}
 
 
 
