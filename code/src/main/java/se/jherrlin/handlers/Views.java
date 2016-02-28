@@ -9,10 +9,6 @@ import se.jherrlin.model.Response;
 import se.jherrlin.tcp.TCPServer;
 
 import java.io.IOException;
-import java.rmi.server.ExportException;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -38,13 +34,26 @@ public class Views {
 
     public static void staticfiles(Request request) {
         final Logger LOG = Logger.getLogger(RequestHandler.class.getSimpleName());
+
+        Response response = new Response();
+
         try {
-            Response response = new Response();
             StaticHandler.findStaticFile(request.getUri(), response);
+        } catch (Exception e){
+            LOG.debug("Could not found static file.");
+            LOG.debug(e);
+        }
+
+        try {
             LOG.debug(request);
             LOG.debug(response);
             request.getDataOutputStream().write(response.getHeaders());
-            request.getDataOutputStream().write(response.getBody());
+            if (response.getBody() != null){
+                request.getDataOutputStream().write(response.getBody());
+            }
+            else {
+                request.getDataOutputStream().write("404 Not Found".getBytes());
+            }
             request.getDataOutputStream().close();
         }
         catch (Exception e){
@@ -55,8 +64,9 @@ public class Views {
     public static void login(Request request) {
         Response response = new Response();
         response.setResponse(Header.response_202_accepted);
-        response.appendHeader(Header.header_content_type_texthtml);
+        //response.appendHeader(Header.header_content_type_texthtml);
         TCPServer.sessions.add(request.headerDataMap.get("Cookie"));
+        response.setResponse(Header.response_202_accepted);
         redirect(response, request, "/");
     }
 
@@ -80,9 +90,6 @@ public class Views {
         Response response = new Response();
 
         if (request.getMethod() == Request.HTTPMethod.POST) {
-
-            response.setResponse(Header.response_201_created);
-            response.appendHeader(Header.header_content_type_texthtml);
 
             response.setBody(request.getBody().getBytes());
             System.out.println("REQUEST BODY: " + request.getBody());
@@ -115,6 +122,7 @@ public class Views {
             LOG.debug(response);
 
             try {
+                response.setResponse(Header.response_201_created);
                 redirect(response, request, "/blog");
             } catch (Exception e) {
                 LOG.debug(e);
@@ -169,6 +177,7 @@ public class Views {
                 LOG.debug(e);
             }
 
+            response.setResponse(Header.response_200_ok);
             redirect(response, request, "/blog");
         }
         else {
@@ -332,7 +341,7 @@ public class Views {
                 "</html>";
 
 
-        response.setResponse(Header.response_200_ok);
+        //response.setResponse(Header.response_200_ok);
         response.appendHeader(Header.header_content_type_texthtml);
 
         try {

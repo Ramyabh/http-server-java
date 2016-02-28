@@ -51,7 +51,6 @@ public class StaticHandler {
                     return;
                 }
                 catch (Exception e){
-                    e.printStackTrace();
                     response.setResponse(Header.response_404_notfound);
                 }
 
@@ -64,7 +63,6 @@ public class StaticHandler {
                     return;
                 }
                 catch (Exception e){
-                    e.printStackTrace();
                     response.setResponse(Header.response_404_notfound);
                 }
             }
@@ -73,9 +71,8 @@ public class StaticHandler {
             return;
         }
         catch (Exception e){
-            e.printStackTrace();
             response.setResponse(Header.response_404_notfound);
-            return;
         }
+        return;
     }
 }

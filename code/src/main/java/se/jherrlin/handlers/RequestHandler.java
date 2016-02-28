@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import se.jherrlin.model.Request;
-import se.jherrlin.tcp.TCPServer;
 
 
 public class RequestHandler {

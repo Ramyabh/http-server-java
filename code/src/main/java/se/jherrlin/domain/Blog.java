@@ -1,6 +1,5 @@
 package se.jherrlin.domain;
 
-import java.util.UUID;
 
 import se.jherrlin.db.Db;
 import se.jherrlin.db.Model;
